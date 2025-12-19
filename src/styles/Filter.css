@@ -1,0 +1,204 @@
+/* Filter Paper */
+.filter-paper {
+  margin-bottom: 24px;
+  border-radius: 12px !important;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1) !important;
+  border: 1px solid rgba(102, 126, 234, 0.1);
+}
+
+/* Filter Header */
+.filter-header {
+  background: linear-gradient(135deg, #00A859 0%, #008A47 100%);
+  padding: 16px 24px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.filter-title {
+  font-weight: 600;
+  font-size: 17px;
+  letter-spacing: 0.3px;
+}
+
+/* Filter Content */
+.filter-content {
+  padding: 24px;
+  background: linear-gradient(to bottom, #fafbff 0%, #ffffff 100%);
+}
+
+/* Secondary Filters Label */
+.secondary-filters-label {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: #00A859;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid rgba(102, 126, 234, 0.1);
+}
+
+/* Input Styles */
+.filter-content .MuiTextField-root {
+  transition: all 0.3s ease;
+}
+
+.filter-content .MuiTextField-root .MuiOutlinedInput-root {
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.filter-content .MuiTextField-root .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: #00A859;
+  border-width: 2px;
+}
+
+.filter-content .MuiTextField-root .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: #00A859;
+  border-width: 2px;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Search Input - Principal */
+.filter-content .MuiTextField-root:first-of-type .MuiOutlinedInput-root {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.filter-content .MuiTextField-root:first-of-type .MuiInputLabel-root {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* Button Styles */
+.filter-content .MuiButton-contained {
+  transition: all 0.3s ease;
+  text-transform: none;
+  font-weight: 600;
+  padding: 10px 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.filter-content .MuiButton-contained:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+.filter-content .MuiButton-outlined {
+  transition: all 0.3s ease;
+  text-transform: none;
+  font-weight: 600;
+  padding: 10px 24px;
+  border-radius: 8px;
+  border-width: 2px;
+}
+
+.filter-content .MuiButton-outlined:hover {
+  border-width: 2px;
+  transform: translateY(-2px);
+}
+
+.filter-content .MuiButton-outlined.Mui-disabled {
+  opacity: 0.5;
+}
+
+/* Select Menu Items */
+.filter-content .MuiMenuItem-root {
+  transition: all 0.2s ease;
+}
+
+.filter-content .MuiMenuItem-root:hover {
+  background-color: rgba(102, 126, 234, 0.08);
+}
+
+/* Clear Icon Button */
+.filter-content .MuiIconButton-root {
+  transition: all 0.2s ease;
+}
+
+.filter-content .MuiIconButton-root:hover {
+  background-color: rgba(102, 126, 234, 0.1);
+  transform: rotate(90deg);
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  .filter-content {
+    padding: 20px;
+  }
+  
+  .filter-header {
+    padding: 14px 20px;
+  }
+  
+  .filter-title {
+    font-size: 16px;
+  }
+
+  .secondary-filters-label {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 600px) {
+  .filter-content {
+    padding: 16px;
+  }
+  
+  .filter-header {
+    padding: 12px 16px;
+  }
+  
+  .filter-title {
+    font-size: 15px;
+  }
+
+  .secondary-filters-label {
+    font-size: 12px;
+  }
+
+  .filter-content .MuiButton-contained,
+  .filter-content .MuiButton-outlined {
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  .filter-content .MuiTextField-root:first-of-type .MuiOutlinedInput-root {
+    font-size: 14px;
+  }
+
+  .filter-content .MuiTextField-root:first-of-type .MuiInputLabel-root {
+    font-size: 14px;
+  }
+}
+
+/* Animation for filter count chip */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.filter-header .MuiChip-root {
+  animation: slideIn 0.3s ease;
+}
+
+/* Focus visible for accessibility */
+.filter-content .MuiButton-root:focus-visible {
+  outline: 2px solid #00A859;
+  outline-offset: 2px;
+}
+
+.filter-content .MuiTextField-root:focus-within {
+  position: relative;
+  z-index: 1;
+}

@@ -1,0 +1,329 @@
+/* Login.css */
+
+/* Contenedor principal */
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #00A859 0%, #008A47 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Patrón de fondo animado */
+.login-container::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+  background-size: 50px 50px;
+  animation: drift 20s linear infinite;
+}
+
+@keyframes drift {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(50px, 50px); }
+}
+
+/* Paper contenedor del formulario */
+.login-paper {
+  position: relative;
+  z-index: 1;
+  backdrop-filter: blur(10px);
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  border-radius: 16px !important;
+}
+
+.login-paper-mobile {
+  padding: 24px !important;
+}
+
+.login-paper-desktop {
+  padding: 40px !important;
+}
+
+/* Logo y header */
+.login-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.login-logo-container {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #00A859 0%, #008A47 100%);
+  margin-bottom: 16px;
+  box-shadow: 0 8px 24px rgba(0, 168, 89, 0.4);
+}
+
+.login-logo-icon {
+  font-size: 40px !important;
+  color: white !important;
+}
+
+.login-title {
+  background: linear-gradient(135deg, #00A859 0%, #008A47 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 8px !important;
+  font-weight: bold !important;
+}
+
+.login-subtitle {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+/* Campos de texto */
+.login-textfield .MuiOutlinedInput-root:hover fieldset {
+  border-color: #00A859 !important;
+}
+
+.login-textfield .MuiOutlinedInput-root.Mui-focused fieldset {
+  border-color: #00A859 !important;
+}
+
+.login-input-icon {
+  color: rgba(0, 0, 0, 0.54) !important;
+}
+
+/* Sección de opciones (Remember me y Forgot password) */
+.login-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  margin-bottom: 24px;
+}
+
+.login-checkbox.Mui-checked {
+  color: #00A859 !important;
+}
+
+.login-forgot-button {
+  text-transform: none !important;
+  color: #00A859 !important;
+}
+
+.login-forgot-button:hover {
+  background-color: rgba(0, 168, 89, 0.08) !important;
+}
+
+/* Botón de submit */
+.login-submit-button {
+  padding-top: 12px !important;
+  padding-bottom: 12px !important;
+  background: linear-gradient(135deg, #00A859 0%, #008A47 100%) !important;
+  text-transform: none !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 8px 24px rgba(0, 168, 89, 0.4) !important;
+}
+
+.login-submit-button:hover {
+  background: linear-gradient(135deg, #008A47 0%, #006F39 100%) !important;
+  box-shadow: 0 12px 32px rgba(0, 168, 89, 0.5) !important;
+}
+
+/* Divider */
+.login-divider {
+  margin-top: 24px !important;
+  margin-bottom: 24px !important;
+}
+
+/* Sección de registro */
+.login-register-section {
+  text-align: center;
+}
+
+.login-register-button {
+  text-transform: none !important;
+  color: #00A859 !important;
+  font-weight: 600 !important;
+  padding: 0 !important;
+  min-width: auto !important;
+}
+
+.login-register-button:hover {
+  background-color: transparent !important;
+  text-decoration: underline !important;
+}
+
+/* Footer */
+.login-footer {
+  margin-top: 24px;
+  color: white;
+  text-align: center;
+  opacity: 0.9;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .login-options {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .login-logo-container {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .login-logo-icon {
+    font-size: 32px !important;
+  }
+}
+
+.login-footer-main {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(38, 34, 84, 0.95) 0%,
+    rgba(75, 59, 71, 0.95) 100%
+  );
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+}
+
+.login-footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+}
+
+.login-footer-copyright {
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 14px;
+  font-weight: 400;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.login-footer-copyright strong {
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+
+.login-footer-developer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.login-footer-dev-text {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 13px;
+  font-weight: 400;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.login-footer-dev-text strong {
+  font-weight: 600;
+  color: #fff;
+}
+
+.login-footer-contact {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.login-footer-email,
+.login-footer-phone {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.3s ease;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.login-footer-email:hover,
+.login-footer-phone:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+  cursor: pointer;
+}
+
+/* Responsive - Tablet */
+@media (max-width: 900px) {
+  .login-footer-content {
+    flex-direction: column;
+    align-items: center;
+    padding: 16px 20px;
+    gap: 16px;
+  }
+
+  .login-footer-developer {
+    align-items: center;
+  }
+
+  .login-footer-copyright {
+    text-align: center;
+  }
+}
+
+/* Responsive - Mobile */
+@media (max-width: 600px) {
+  .login-footer-content {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .login-footer-copyright {
+    font-size: 12px;
+  }
+
+  .login-footer-dev-text {
+    font-size: 12px;
+    text-align: center;
+  }
+
+  .login-footer-contact {
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .login-footer-email,
+  .login-footer-phone {
+    font-size: 11px;
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Ajuste del contenedor principal para que no se solape con el footer */
+.login-container {
+  min-height: 100vh;
+  padding-bottom: 120px; /* Espacio para el footer fijo */
+}
+
+@media (max-width: 600px) {
+  .login-container {
+    padding-bottom: 160px; /* Más espacio en móvil */
+  }
+}

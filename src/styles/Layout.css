@@ -1,0 +1,46 @@
+/* Layout.css */
+
+/* Contenedor principal del layout */
+.layout-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f5f7fa;
+}
+
+/* Área de contenido principal */
+.layout-main {
+  min-height: calc(100vh - 70px);
+  transition: margin 0.3s ease, width 0.3s ease;
+  background-color: #f5f7fa;
+}
+
+/* Responsive */
+@media (max-width: 960px) {
+  .layout-main {
+    margin-top: 64px !important;
+    padding: 16px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .layout-main {
+    margin-top: 56px !important;
+    padding: 12px !important;
+  }
+}
+
+/* Animaciones suaves */
+.layout-main > * {
+  animation: fadeInContent 0.3s ease;
+}
+
+@keyframes fadeInContent {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

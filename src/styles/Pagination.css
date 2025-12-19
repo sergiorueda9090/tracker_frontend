@@ -1,0 +1,186 @@
+/* Wrapper principal */
+.custom-pagination-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  background: #ffffff;
+  border-top: 1px solid #e0e0e0;
+  min-height: 64px;
+}
+
+/* Sección izquierda - Información */
+.custom-pagination-wrapper .pagination-left {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.custom-pagination-wrapper .pagination-info-text {
+  color: #666;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.custom-pagination-wrapper .pagination-info-text strong {
+  color: #00A859;
+  font-weight: 600;
+}
+
+/* Sección central - Controles de navegación */
+.custom-pagination-wrapper .pagination-center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.custom-pagination-wrapper .nav-button {
+  width: 36px;
+  height: 36px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  color: #00A859;
+  transition: all 0.2s ease;
+}
+
+.custom-pagination-wrapper .nav-button:hover:not(:disabled) {
+  background-color: #00A859;
+  color: white;
+  border-color: #00A859;
+}
+
+.custom-pagination-wrapper .nav-button:disabled {
+  color: #ccc;
+  border-color: #f0f0f0;
+  background-color: #fafafa;
+}
+
+.custom-pagination-wrapper .page-indicator {
+  padding: 0 16px;
+  min-width: 140px;
+  text-align: center;
+}
+
+.custom-pagination-wrapper .page-indicator Typography,
+.custom-pagination-wrapper .page-indicator p {
+  color: #666;
+  font-size: 14px;
+}
+
+.custom-pagination-wrapper .page-indicator strong {
+  color: #00A859;
+  font-weight: 600;
+}
+
+/* Sección derecha - Selector de filas */
+.custom-pagination-wrapper .pagination-right {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+}
+
+.custom-pagination-wrapper .rows-label {
+  color: #666;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.custom-pagination-wrapper .rows-select-input {
+  min-width: 75px;
+}
+
+.custom-pagination-wrapper .rows-select-input .MuiOutlinedInput-notchedOutline {
+  border-color: #e0e0e0;
+  border-radius: 6px;
+}
+
+.custom-pagination-wrapper .rows-select-input:hover .MuiOutlinedInput-notchedOutline {
+  border-color: #00A859;
+}
+
+.custom-pagination-wrapper .rows-select-input.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: #00A859;
+}
+
+.custom-pagination-wrapper .rows-select-input .MuiSelect-select {
+  padding: 8px 12px;
+  font-size: 14px;
+  color: #00A859;
+  font-weight: 600;
+}
+
+/* Responsive - Tablets */
+@media (max-width: 900px) {
+  .custom-pagination-wrapper {
+    padding: 12px 16px;
+    gap: 12px;
+  }
+
+  .custom-pagination-wrapper .pagination-left {
+    flex: 0 1 auto;
+  }
+
+  .custom-pagination-wrapper .pagination-center {
+    flex: 0 1 auto;
+  }
+
+  .custom-pagination-wrapper .pagination-right {
+    flex: 0 1 auto;
+  }
+
+  .custom-pagination-wrapper .page-indicator {
+    padding: 0 8px;
+    min-width: 120px;
+  }
+}
+
+/* Responsive - Mobile */
+@media (max-width: 600px) {
+  .custom-pagination-wrapper {
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .custom-pagination-wrapper .pagination-left,
+  .custom-pagination-wrapper .pagination-center,
+  .custom-pagination-wrapper .pagination-right {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .custom-pagination-wrapper .pagination-left {
+    order: 1;
+  }
+
+  .custom-pagination-wrapper .pagination-center {
+    order: 2;
+  }
+
+  .custom-pagination-wrapper .pagination-right {
+    order: 3;
+  }
+
+  .custom-pagination-wrapper .pagination-info-text {
+    font-size: 13px;
+  }
+
+  .custom-pagination-wrapper .nav-button {
+    width: 40px;
+    height: 40px;
+  }
+
+  .custom-pagination-wrapper .page-indicator {
+    min-width: 100px;
+  }
+}
+
+/* Animación suave al cambiar de página */
+.custom-pagination-wrapper {
+  transition: all 0.3s ease;
+}

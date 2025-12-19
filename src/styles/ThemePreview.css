@@ -1,0 +1,130 @@
+/* src/styles/ThemePreview.css */
+
+.theme-preview-card {
+  position: relative;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid transparent;
+  border-radius: var(--preview-radius, 16px);
+  background: var(--preview-surface, #ffffff);
+  overflow: hidden;
+}
+
+.theme-preview-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  border-color: var(--preview-primary, #00A859);
+}
+
+.theme-preview-card.selected {
+  border-color: var(--preview-primary, #00A859);
+  box-shadow: 0 0 0 4px var(--preview-border, rgba(102, 126, 234, 0.1));
+}
+
+.theme-selected-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: var(--preview-primary, #00A859);
+  color: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  animation: bounceIn 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.theme-preview-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.theme-preview-emoji {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.theme-preview-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--preview-text, #1a202c);
+  font-family: var(--theme-font-primary, 'Poppins', sans-serif);
+}
+
+.theme-preview-description {
+  color: var(--preview-text, #1a202c);
+  opacity: 0.7;
+  margin-bottom: 16px;
+  min-height: 40px;
+  font-family: var(--theme-font-secondary, 'Inter', sans-serif);
+  font-size: 14px;
+}
+
+.theme-preview-colors {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.theme-preview-color {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  border: 2px solid rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s;
+}
+
+.theme-preview-color:hover {
+  transform: scale(1.1);
+}
+
+.theme-preview-demo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 16px;
+  border-top: 1px solid var(--preview-border, rgba(102, 126, 234, 0.1));
+}
+
+.theme-demo-element {
+  height: 8px;
+  border-radius: var(--preview-radius, 8px);
+  transition: transform 0.2s;
+}
+
+.theme-demo-element.primary {
+  background: var(--preview-primary, #00A859);
+  width: 100%;
+}
+
+.theme-demo-element.secondary {
+  background: var(--preview-secondary, #f093fb);
+  width: 80%;
+}
+
+.theme-demo-element.accent {
+  background: linear-gradient(
+    90deg,
+    var(--preview-primary, #00A859),
+    var(--preview-secondary, #f093fb)
+  );
+  width: 60%;
+}

@@ -1,0 +1,203 @@
+/* Contenedor principal del loading */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  animation: fadeInScale 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Wrapper del icono con anillo */
+.loading-icon-wrapper {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+/* Icono del Tracker */
+.tracker-icon {
+  font-size: 64px !important;
+  color: white !important;
+  animation: rotateIcon 3s ease-in-out infinite;
+  position: relative;
+  z-index: 2;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+@keyframes rotateIcon {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+  }
+  25% {
+    transform: rotate(-10deg) scale(1.1);
+  }
+  50% {
+    transform: rotate(10deg) scale(1);
+  }
+  75% {
+    transform: rotate(-5deg) scale(1.05);
+  }
+}
+
+/* Anillo giratorio alrededor del icono */
+.loading-ring {
+  position: absolute;
+  width: 110px;
+  height: 110px;
+  border: 4px solid transparent;
+  border-top-color: rgba(255, 255, 255, 0.8);
+  border-right-color: rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  animation: spin 1.5s linear infinite;
+  z-index: 1;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Título "Tracker" */
+.loading-title {
+  color: white !important;
+  font-weight: 700 !important;
+  font-size: 32px !important;
+  letter-spacing: 2px !important;
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Puntos de carga */
+.loading-dots {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.3s both;
+}
+
+.dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.dot:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(0.7);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+}
+
+/* Texto de carga */
+.loading-text {
+  color: white !important;
+  font-size: 18px !important;
+  font-weight: 500 !important;
+  letter-spacing: 1.5px !important;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.4s both;
+}
+
+/* Efecto de resplandor sutil */
+.loading-icon-wrapper::before {
+  content: '';
+  position: absolute;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+  animation: glow 2s ease-in-out infinite;
+}
+
+@keyframes glow {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .loading-icon-wrapper {
+    width: 100px;
+    height: 100px;
+  }
+
+  .tracker-icon {
+    font-size: 48px !important;
+  }
+
+  .loading-ring {
+    width: 90px;
+    height: 90px;
+  }
+
+  .loading-title {
+    font-size: 28px !important;
+  }
+
+  .loading-text {
+    font-size: 16px !important;
+  }
+
+  .dot {
+    width: 12px;
+    height: 12px;
+  }
+}
