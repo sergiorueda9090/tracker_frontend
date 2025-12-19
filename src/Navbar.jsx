@@ -240,7 +240,7 @@ const Navbar = ({ onMenuClick, drawerWidth = 280 }) => {
             <ListItemIcon>
               <AccountCircle fontSize="small" />
             </ListItemIcon>
-            Mi Perfil
+            Mi Perfil  
           </MenuItem>
           <MenuItem onClick={handleProfileMenuClose} className="navbar-menu-item">
             <ListItemIcon>

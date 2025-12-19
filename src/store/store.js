@@ -3,8 +3,9 @@ import { authStore }      from './authStore/authStore';
 import { counterSlice }   from './slices/counter/counterSlice';
 import { globalStore }    from './globalStore/globalStore';
 import { userStore }      from './userStore/userStore';
-import {proveedoresStore } from './proveedoresStore/proveedoresStore';
-import {  departamentosMunicipiosStore } from './departamentosMunicipiosStore/departamentosMunicipiosStore';
+import { proveedoresStore } from './proveedoresStore/proveedoresStore';
+import { departamentosMunicipiosStore } from './departamentosMunicipiosStore/departamentosMunicipiosStore';
+import { preparacionStore } from './preparacionStore/preparacionStore';
 
 export const store = configureStore({
   reducer: {
@@ -13,6 +14,7 @@ export const store = configureStore({
     globalStore  : globalStore.reducer,
     userStore    : userStore.reducer,
     proveedoresStore: proveedoresStore.reducer,
-    departamentosMunicipiosStore: departamentosMunicipiosStore.reducer
+    departamentosMunicipiosStore: departamentosMunicipiosStore.reducer,
+    preparacionStore: preparacionStore.reducer
   }
 })

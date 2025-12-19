@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Dashboard  from '../pages/Dashboard';
 import Usuarios   from '../usuarios/Main';
 import Proveedores from '../proveedores/Main';
+import Preparacion from '../preparacion/Main';
 import Settings   from '../pages/Settings';
 
 // Componente de ruta protegida
@@ -50,8 +51,15 @@ const AppRoutes = () => {
         }
       />
 
+      <Route
+        path="/preparacion"
+        element={
+          <ProtectedRoute>
+            <Preparacion />
+          </ProtectedRoute>
+        }
+      />
 
-     
       {/* Clientes 
       <Route
         path="/customers"
