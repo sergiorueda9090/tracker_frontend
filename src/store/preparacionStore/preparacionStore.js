@@ -15,6 +15,7 @@ const initialState = {
 
   // Lista de trámites en preparación y control de UI
   tramites: [],
+  history: [],
   isLoading: false,
   error: null,
 
@@ -61,6 +62,9 @@ export const preparacionStore = createSlice({
       };
     },
 
+    handleDataHistoryStore: (state, action) => {
+      state.history = action.payload.history;
+    },
     // Limpia el formulario para un nuevo registro
     resetFormStore: (state) => {
       state.id = null;
@@ -71,6 +75,7 @@ export const preparacionStore = createSlice({
       state.estado = 'en_verificacion';
       state.paquete = '';
       state.lista_documentos = [];
+      state.history = [];
       state.usuario = '';
       state.created_at = null;
     },
@@ -161,6 +166,7 @@ export const {
   addDocumentToList,
   removeDocumentFromList,
   toggleDocumentStatus,
+  handleDataHistoryStore,
 } = preparacionStore.actions;
 
 export default preparacionStore.reducer;

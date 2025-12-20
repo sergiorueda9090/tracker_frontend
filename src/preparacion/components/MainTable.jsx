@@ -42,17 +42,19 @@ import {
   Download,
   Visibility,
   InsertDriveFile,
+  History,
 } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
-
+import { useNavigate } from 'react-router-dom';
 import { showAlert } from "../../store/globalStore/globalStore";
 
-import { getAllThunks, showThunk, deleteThunk, deleteArchivoThunk } from '../../store/preparacionStore/preparacionThunks';
+import { getAllThunks, showThunk, deleteThunk, deleteArchivoThunk, showhistoryThunk } from '../../store/preparacionStore/preparacionThunks';
 import Pagination from './Pagination';
 
 const MainTable = () => {
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => { dispatch(getAllThunks()); }, [dispatch]);
 
@@ -185,6 +187,11 @@ const MainTable = () => {
     );
   };
 
+  const handleVerTrazabilidad = (id) => {
+    //dispatch(showhistoryThunk(id));
+    navigate(`/preparacion/history/${id}`);
+  };
+
   return (
     <Paper className="page-paper">
       <TableContainer>
@@ -310,6 +317,16 @@ const MainTable = () => {
                     <Tooltip title="Eliminar">
                       <IconButton size="small" color="error" onClick={() => handleDelete(tramite)}>
                         <Delete fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+
+                    <Tooltip title="Ver Historial">
+                      <IconButton
+                        size="small"
+                        color="secondary"
+                        onClick={() => handleVerTrazabilidad(tramite.id)}
+                      >
+                        <History fontSize="small" />
                       </IconButton>
                     </Tooltip>
                   </Box>

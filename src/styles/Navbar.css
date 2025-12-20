@@ -106,6 +106,93 @@
   border-color: rgba(255, 255, 255, 0.6) !important;
 }
 
+/* ========== ESTILOS PARA USUARIOS CONECTADOS ========== */
+
+/* Badge de usuarios en línea con animación */
+.navbar-actions .MuiBadge-badge {
+  font-weight: 600 !important;
+  font-size: 0.65rem !important;
+  min-width: 18px !important;
+  height: 18px !important;
+  border: 2px solid white !important;
+}
+
+/* Badge verde de usuarios conectados */
+.navbar-actions .MuiBadge-colorSuccess .MuiBadge-badge {
+  background-color: #44b700 !important;
+  animation: pulse 2s infinite;
+}
+
+/* AvatarGroup de usuarios en línea */
+.MuiAvatarGroup-root {
+  cursor: pointer;
+}
+
+.MuiAvatarGroup-root .MuiAvatar-root {
+  transition: all 0.2s ease-in-out !important;
+  border: 2px solid white !important;
+}
+
+.MuiAvatarGroup-root .MuiAvatar-root:hover {
+  transform: scale(1.15) !important;
+  z-index: 10 !important;
+}
+
+/* Menú de usuarios conectados */
+.navbar-users-menu .MuiPaper-root {
+  border-radius: 12px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Item de usuario en el menú */
+.navbar-user-item {
+  padding: 12px 16px !important;
+  transition: all 0.2s ease !important;
+  border-left: 3px solid transparent !important;
+}
+
+.navbar-user-item:hover {
+  background-color: rgba(0, 168, 89, 0.06) !important;
+  border-left-color: #00A859 !important;
+}
+
+/* Avatar con badge en línea */
+.user-online-badge .MuiBadge-badge {
+  background-color: #44b700 !important;
+  color: #44b700 !important;
+  box-shadow: 0 0 0 2px white !important;
+  animation: ripple 1.2s infinite ease-in-out !important;
+}
+
+/* Indicador de estado en línea */
+.online-indicator {
+  animation: pulse 2s infinite !important;
+}
+
+/* Animación de pulso */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Animación de ripple para el badge */
+@keyframes ripple {
+  0% {
+    transform: scale(0.8);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+/* ========== FIN ESTILOS USUARIOS CONECTADOS ========== */
+
 /* Menús desplegables */
 .navbar-menu .MuiPaper-root {
   margin-top: 12px;
@@ -120,6 +207,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background-color: #f5f5f5;
 }
 
 .navbar-menu-title {
@@ -215,13 +303,24 @@
   color: #dc2626 !important;
 }
 
-/* Badge personalizado */
-.navbar-actions .MuiBadge-badge {
-  font-weight: 600 !important;
+/* Chips de roles en el menú de usuarios */
+.user-role-chip {
+  height: 20px !important;
   font-size: 0.65rem !important;
-  min-width: 18px !important;
-  height: 18px !important;
-  border: 2px solid white !important;
+  font-weight: 600 !important;
+}
+
+/* Estado vacío del menú de usuarios */
+.users-empty-state {
+  padding: 32px 16px !important;
+  text-align: center;
+  color: #718096 !important;
+}
+
+.users-empty-state svg {
+  font-size: 48px !important;
+  opacity: 0.3;
+  margin-bottom: 8px;
 }
 
 /* Responsive */
@@ -251,6 +350,11 @@
   .navbar-menu .MuiPaper-root {
     min-width: 260px;
   }
+
+  /* Ocultar AvatarGroup en tablet */
+  .MuiAvatarGroup-root {
+    display: none !important;
+  }
 }
 
 @media (max-width: 600px) {
@@ -276,6 +380,15 @@
     min-width: calc(100vw - 32px);
     max-width: 320px;
   }
+
+  /* Reducir padding en móvil */
+  .navbar-user-item {
+    padding: 10px 12px !important;
+  }
+
+  .navbar-menu-header {
+    padding: 12px 16px !important;
+  }
 }
 
 /* Animaciones */
@@ -292,4 +405,28 @@
 
 .navbar-menu .MuiPaper-root {
   animation: fadeIn 0.2s ease;
+}
+
+/* Animación suave para el scroll del menú de usuarios */
+.navbar-menu .MuiList-root {
+  scroll-behavior: smooth;
+}
+
+/* Estilos para el scroll en el menú de usuarios */
+.navbar-menu .MuiList-root::-webkit-scrollbar {
+  width: 6px;
+}
+
+.navbar-menu .MuiList-root::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.navbar-menu .MuiList-root::-webkit-scrollbar-thumb {
+  background: #00A859;
+  border-radius: 10px;
+}
+
+.navbar-menu .MuiList-root::-webkit-scrollbar-thumb:hover {
+  background: #008A47;
 }

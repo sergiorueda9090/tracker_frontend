@@ -6,6 +6,7 @@ import Dashboard  from '../pages/Dashboard';
 import Usuarios   from '../usuarios/Main';
 import Proveedores from '../proveedores/Main';
 import Preparacion from '../preparacion/Main';
+import PreparacionHistory from '../preparacion/History';
 import Settings   from '../pages/Settings';
 
 // Componente de ruta protegida
@@ -56,6 +57,15 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <Preparacion />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/preparacion/history/:id"
+        element={
+          <ProtectedRoute>
+            <PreparacionHistory />
           </ProtectedRoute>
         }
       />

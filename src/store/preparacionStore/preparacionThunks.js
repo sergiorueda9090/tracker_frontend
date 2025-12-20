@@ -4,7 +4,7 @@ import { handleFormStore, resetFormStore, loadForEditStore,
         clearFilters, setFilterField,
         addDocumentToList as addDocumentToListAction,
         removeDocumentFromList as removeDocumentFromListAction,
-        toggleDocumentStatus as toggleDocumentStatusAction } from "./preparacionStore.js";
+        toggleDocumentStatus as toggleDocumentStatusAction, handleDataHistoryStore } from "./preparacionStore.js";
 
 import { showBackDropStore, hideBackDropStore, showAlert } from "../globalStore/globalStore.js";
 import { openModalShared, closeModalShared } from "../globalStore/globalStore.js";
@@ -534,3 +534,67 @@ export const deleteArchivoThunk = (archivoId) => {
     }
   };
 };
+
+
+/* TRAZABILIDAD HISTORY */
+export const showhistoryThunk = (id = "") => {
+
+    return async (dispatch, getState) => {
+
+        const {authStore} = getState();
+        const token       = authStore.token
+
+        await dispatch(showBackDropStore());
+
+        const options = {
+            method: 'GET',
+            url: `${URL}${namespace_api}${id}/history/`,
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          };
+
+          try {
+            // Hacer la solicitud
+            const response = await axios.request(options);
+
+            if(response.status == 200){
+
+              await dispatch(handleDataHistoryStore({ history: response.data.history }));
+
+              await dispatch(openModalShared());
+
+              await dispatch( hideBackDropStore() );
+
+            }else{
+
+                await dispatch( hideBackDropStore() );
+
+                await dispatch(
+                    showAlert({
+                        type: "error",
+                        title: "Error al mostrar el trámite",
+                        text: "Ocurrió un error al mostrar el trámite.",
+                    })
+                );
+
+            }
+
+
+        } catch (error) {
+
+            await dispatch( hideBackDropStore() );
+
+            await dispatch(
+                showAlert({
+                    type: "error",
+                    title: "Error al mostrar el trámite",
+                    text: "Ocurrió un error al mostrar el trámite.",
+                })
+            );
+
+        }
+
+    }
+
+}

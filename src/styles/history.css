@@ -1,0 +1,66 @@
+/* history.css */
+:root {
+    --primary-color: #4f46e5;
+    --bg-main: #f8fafc;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+    --success: #10b981;
+}
+
+.page-container {
+    max-width: 1600px; /* Ampliamos el ancho máximo */
+    margin: 0 auto;
+}
+
+.page-paper {
+    border-radius: 16px !important;
+    border: 1px solid var(--border-color) !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
+    transition: all 0.3s ease;
+}
+
+.page-title {
+    font-weight: 800 !important;
+    letter-spacing: -0.5px;
+    color: var(--text-main);
+}
+
+.page-subtitle {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
+.paper-title {
+    font-weight: 700 !important;
+    font-size: 1.1rem !important;
+    color: var(--text-main);
+}
+
+/* Estilo para los ítems de la línea de tiempo */
+.timeline-event-box {
+    padding: 24px; /* Más espacio interno */
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    background-color: #ffffff;
+    transition: transform 0.2s ease-in-out;
+}
+
+.timeline-event-box:hover {
+    border-color: var(--primary-color);
+}
+
+.json-code-block {
+    background-color: #0f172a;
+    color: #38bdf8;
+    padding: 15px;
+    border-radius: 10px;
+    font-family: 'Fira Code', 'Courier New', monospace;
+    font-size: 0.85rem;
+}
+
+.action-button-outlined {
+    border-radius: 10px !important;
+    text-transform: none !important;
+    font-weight: 600 !important;
+}
