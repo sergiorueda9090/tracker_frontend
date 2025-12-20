@@ -5,7 +5,12 @@ import MainTable from './components/MainTable';
 import MainDialog from './components/MainDialog';
 
 import { openModalShared, closeModalShared } from "../store/globalStore/globalStore";
-import { resetFormStore } from "../store/preparacionStore/preparacionStore";
+import {
+  resetFormStore,
+  addTramiteRealtime,
+  updateTramiteRealtime,
+  deleteTramiteRealtime
+} from "../store/preparacionStore/preparacionStore";
 import { useSelector, useDispatch } from 'react-redux';
 
 import '../styles/Pages.css';
@@ -32,30 +37,61 @@ const Main = () => {
   // Manejar mensajes recibidos del WebSocket
   useEffect(() => {
     if (lastMessage) {
-      console.log('Nuevo mensaje WebSocket:', lastMessage);
-      
-      // Ejemplo: Mostrar notificación cuando llega un mensaje
+      console.log('📩 Nuevo mensaje WebSocket:', lastMessage);
+
+      // Conexión establecida
       if (lastMessage.type === 'connection_established') {
         setNotification({
           open: true,
-          message: lastMessage.message,
+          message: '✅ Conectado a actualizaciones en tiempo real',
           severity: 'success'
         });
-      } else if (lastMessage.type === 'message') {
+      }
+
+      // Nueva preparación creada
+      else if (lastMessage.type === 'preparacion_created') {
+
+        dispatch(addTramiteRealtime(lastMessage.data));
+        
         setNotification({
           open: true,
-          message: lastMessage.echo || lastMessage.message,
+          message: `🆕 Nuevo trámite creado: ${lastMessage.data.placa}`,
+          severity: 'info'
+        });
+
+      }
+      
+      // Preparación actualizada
+      else if (lastMessage.type === 'preparacion_updated') {
+        dispatch(updateTramiteRealtime(lastMessage.data));
+        setNotification({
+          open: true,
+          message: `✏️ Trámite actualizado: ${lastMessage.data.placa}`,
           severity: 'info'
         });
       }
 
-      // Aquí puedes manejar actualizaciones de tu tabla
-      // Por ejemplo, si recibes un evento de actualización de preparación:
-      // if (lastMessage.type === 'preparacion_updated') {
-      //   dispatch(fetchPreparaciones()); // Recargar datos
-      // }
+      // Preparación eliminada
+      else if (lastMessage.type === 'preparacion_deleted') {
+        dispatch(deleteTramiteRealtime(lastMessage.data.id));
+        setNotification({
+          open: true,
+          message: `🗑️ Trámite eliminado: ${lastMessage.data.placa || 'ID: ' + lastMessage.data.id}`,
+          severity: 'warning'
+        });
+      }
+
+      // Cambio de estado
+      else if (lastMessage.type === 'preparacion_status_changed') {
+        dispatch(updateTramiteRealtime(lastMessage.data));
+        setNotification({
+          open: true,
+          message: `🔄 Estado actualizado: ${lastMessage.data.placa}`,
+          severity: 'info'
+        });
+      }
     }
-  }, [lastMessage]);
+  }, [lastMessage, dispatch]);
 
   // Handlers del Dialog
   const handleOpenDialog = () => {
@@ -72,13 +108,6 @@ const Main = () => {
     setNotification({ ...notification, open: false });
   };
 
-  // Función de prueba para enviar mensajes
-  const handleTestMessage = () => {
-    sendMessage({
-      message: 'Mensaje de prueba desde React'
-    });
-  };
-
   return (
     <Box className="page-container">
       {/* Indicador de conexión WebSocket */}
@@ -92,11 +121,7 @@ const Main = () => {
       </Box>
 
       {/* Header con título y botón de nuevo trámite */}
-      <MainHeader 
-        onAddNew={() => handleOpenDialog()}
-        // Botón adicional de prueba (temporal)
-        onTest={handleTestMessage}
-      />
+      <MainHeader onAddNew={() => handleOpenDialog()} />
 
       {/* Filtros */}
       <Filter />

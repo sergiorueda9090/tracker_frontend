@@ -149,6 +149,41 @@ export const preparacionStore = createSlice({
         state.lista_documentos[index].completado = !state.lista_documentos[index].completado;
       }
     },
+
+    // ===== Acciones WebSocket en tiempo real =====
+
+    // Agregar nuevo trámite recibido por WebSocket
+    addTramiteRealtime: (state, action) => {
+      const newTramite = action.payload;
+      // Agregar al inicio de la lista
+      state.tramites = [newTramite, ...state.tramites];
+      // Actualizar contador
+      state.paginado_info.count = state.paginado_info.count + 1;
+      state.paginado_info.total_pages = Math.ceil(state.paginado_info.count / state.paginado_info.page_size);
+
+      // Si excede el tamaño de página, remover el último elemento
+      if (state.tramites.length > state.paginado_info.page_size) {
+        state.tramites.pop();
+      }
+    },
+
+    // Actualizar trámite existente recibido por WebSocket
+    updateTramiteRealtime: (state, action) => {
+      const updatedTramite = action.payload;
+      const index = state.tramites.findIndex(t => t.id === updatedTramite.id);
+      if (index !== -1) {
+        state.tramites[index] = updatedTramite;
+      }
+    },
+
+    // Eliminar trámite recibido por WebSocket
+    deleteTramiteRealtime: (state, action) => {
+      const tramiteId = action.payload;
+      state.tramites = state.tramites.filter(t => t.id !== tramiteId);
+      // Actualizar contador
+      state.paginado_info.count = Math.max(0, state.paginado_info.count - 1);
+      state.paginado_info.total_pages = Math.ceil(state.paginado_info.count / state.paginado_info.page_size);
+    },
   },
 });
 
@@ -167,6 +202,9 @@ export const {
   removeDocumentFromList,
   toggleDocumentStatus,
   handleDataHistoryStore,
+  addTramiteRealtime,
+  updateTramiteRealtime,
+  deleteTramiteRealtime,
 } = preparacionStore.actions;
 
 export default preparacionStore.reducer;
