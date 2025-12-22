@@ -184,6 +184,27 @@ export const preparacionStore = createSlice({
       state.paginado_info.count = Math.max(0, state.paginado_info.count - 1);
       state.paginado_info.total_pages = Math.ceil(state.paginado_info.count / state.paginado_info.page_size);
     },
+
+    // Actualizar contador de archivos cuando se elimina un archivo
+    deleteArchivoRealtime: (state, action) => {
+      const { tramite_id, archivo_id } = action.payload;
+      const tramiteIndex = state.tramites.findIndex(t => t.id === tramite_id);
+
+      if (tramiteIndex !== -1) {
+        // Actualizar el array de archivos si existe
+        if (state.tramites[tramiteIndex].archivos) {
+          state.tramites[tramiteIndex].archivos = state.tramites[tramiteIndex].archivos.filter(
+            a => a.id !== archivo_id
+          );
+        }
+
+        // Actualizar el contador de archivos
+        state.tramites[tramiteIndex].total_archivos = Math.max(
+          0,
+          (state.tramites[tramiteIndex].total_archivos || 0) - 1
+        );
+      }
+    },
   },
 });
 
@@ -205,6 +226,7 @@ export const {
   addTramiteRealtime,
   updateTramiteRealtime,
   deleteTramiteRealtime,
+  deleteArchivoRealtime,
 } = preparacionStore.actions;
 
 export default preparacionStore.reducer;

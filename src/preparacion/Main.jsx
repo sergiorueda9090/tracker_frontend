@@ -9,7 +9,8 @@ import {
   resetFormStore,
   addTramiteRealtime,
   updateTramiteRealtime,
-  deleteTramiteRealtime
+  deleteTramiteRealtime,
+  deleteArchivoRealtime
 } from "../store/preparacionStore/preparacionStore";
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -88,6 +89,19 @@ const Main = () => {
           open: true,
           message: `🔄 Estado actualizado: ${lastMessage.data.placa}`,
           severity: 'info'
+        });
+      }
+
+      // Archivo eliminado
+      else if (lastMessage.type === 'archivo_deleted') {
+        dispatch(deleteArchivoRealtime({
+          tramite_id: lastMessage.data.tramite_id,
+          archivo_id: lastMessage.data.archivo_id
+        }));
+        setNotification({
+          open: true,
+          message: `📎 Archivo eliminado: ${lastMessage.data.nombre_archivo}`,
+          severity: 'warning'
         });
       }
     }
