@@ -6,6 +6,7 @@ import { userStore }      from './userStore/userStore';
 import { proveedoresStore } from './proveedoresStore/proveedoresStore';
 import { departamentosMunicipiosStore } from './departamentosMunicipiosStore/departamentosMunicipiosStore';
 import { preparacionStore } from './preparacionStore/preparacionStore';
+import { trackerStore } from './trackerStore/trackerStore';
 
 export const store = configureStore({
   reducer: {
@@ -15,6 +16,7 @@ export const store = configureStore({
     userStore    : userStore.reducer,
     proveedoresStore: proveedoresStore.reducer,
     departamentosMunicipiosStore: departamentosMunicipiosStore.reducer,
-    preparacionStore: preparacionStore.reducer
+    preparacionStore: preparacionStore.reducer,
+    trackerStore: trackerStore.reducer,
   }
 })

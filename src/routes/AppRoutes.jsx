@@ -7,6 +7,8 @@ import Usuarios   from '../usuarios/Main';
 import Proveedores from '../proveedores/Main';
 import Preparacion from '../preparacion/Main';
 import PreparacionHistory from '../preparacion/History';
+import Tracker from '../tracker/Main';
+import TrackerHistory from '../tracker/History';
 import Settings   from '../pages/Settings';
 
 // Componente de ruta protegida
@@ -70,7 +72,25 @@ const AppRoutes = () => {
         }
       />
 
-      {/* Clientes 
+      <Route
+        path="/tracker"
+        element={
+          <ProtectedRoute>
+            <Tracker />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/tracker/history/:id"
+        element={
+          <ProtectedRoute>
+            <TrackerHistory />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Clientes
       <Route
         path="/customers"
         element={
