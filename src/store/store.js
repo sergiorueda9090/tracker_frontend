@@ -8,6 +8,7 @@ import { departamentosMunicipiosStore } from './departamentosMunicipiosStore/dep
 import { preparacionStore } from './preparacionStore/preparacionStore';
 import { trackerStore } from './trackerStore/trackerStore';
 import { finalizadosStore } from './finalizadosStore/finalizadosStore';
+import { archivadasStore } from './archivadasStore/archivadasStore';
 
 export const store = configureStore({
   reducer: {
@@ -20,5 +21,6 @@ export const store = configureStore({
     preparacionStore: preparacionStore.reducer,
     trackerStore: trackerStore.reducer,
     finalizadosStore: finalizadosStore.reducer,
+    archivadasStore: archivadasStore.reducer,
   }
 })

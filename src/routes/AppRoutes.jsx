@@ -15,6 +15,8 @@ import TrackerHistory from '../tracker/History';
 import Finalizados from '../finalizados/Main';
 import FinalizadosHistory from '../finalizados/History';
 
+import Archivadas from '../archivadas/Main';
+
 import Settings   from '../pages/Settings';
 
 // Componente de ruta protegida
@@ -110,6 +112,15 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <FinalizadosHistory />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/archivadas"
+        element={
+          <ProtectedRoute>
+            <Archivadas />
           </ProtectedRoute>
         }
       />

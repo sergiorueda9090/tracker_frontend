@@ -56,7 +56,7 @@ const Sidebar = ({ open, onClose, drawerWidth = 280 }) => {
     { text: 'En Preparación', icon: <HourglassEmpty />, path: '/preparacion' },
     { text: 'Tracker', icon: <TrackChanges />, path: '/tracker' },
     { text: 'Finalizados', icon: <DoneAll />, path: '/finalizados' },
-    { text: 'Archivados', icon: <Archive />, path: '/archivados' },
+    { text: 'Archivados', icon: <Archive />, path: '/archivadas' },
     { text: 'Facturación', icon: <Receipt />, path: '/facturacion' },
   ];
 

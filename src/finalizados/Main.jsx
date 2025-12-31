@@ -4,13 +4,14 @@ import MainHeader from './components/MainHeader';
 import MainTable from './components/MainTable';
 import MainDialog from './components/MainDialog';
 
-import { openModalShared, closeModalShared } from "../store/globalStore/globalStore";
+import { openModalShared, closeModalShared, showAlert } from "../store/globalStore/globalStore";
 import {
   resetFormStore,
   addTramiteStore,
   updateTramiteStore,
   removeTramiteStore
 } from "../store/finalizadosStore/finalizadosStore";
+import { archivarFinalizadoThunk } from "../store/finalizadosStore/finalizadosThunks";
 import { useSelector, useDispatch } from 'react-redux';
 
 import '../styles/Pages.css';
@@ -100,6 +101,20 @@ const Main = () => {
     setNotification({ ...notification, open: false });
   };
 
+  // Handler para archivar trámite
+  const handleArchivar = (tramite) => {
+    dispatch(showAlert({
+      type: "warning",
+      title: "⚠️ Archivar Trámite",
+      text: `¿Está seguro que desea archivar el trámite con placa "${tramite.placa}"? El trámite se moverá a la sección de Archivadas.`,
+      confirmText: "Sí, archivar",
+      cancelText: "Cancelar",
+      action: () => {
+        dispatch(archivarFinalizadoThunk(tramite.id, tramite.placa));
+      }
+    }));
+  };
+
   return (
     <Box className="page-container">
       {/* Indicador de conexión WebSocket */}
@@ -119,7 +134,7 @@ const Main = () => {
       <Filter />
 
       {/* Tabla de trámites */}
-      <MainTable />
+      <MainTable onArchivar={handleArchivar} />
 
       {/* Dialog de crear/editar */}
       <MainDialog open={openModalStore} onClose={handleCloseDialog} />

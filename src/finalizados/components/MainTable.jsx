@@ -21,7 +21,8 @@ import {
   HourglassEmpty,
   History,
   LocalShipping,
-  DoneAll
+  DoneAll,
+  Archive
 } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -30,7 +31,7 @@ import { showAlert } from "../../store/globalStore/globalStore";
 import { getAllThunks, showThunk, deleteThunk, showhistoryThunk } from '../../store/finalizadosStore/finalizadosThunks';
 import Pagination from './Pagination';
 
-const MainTable = () => {
+const MainTable = ({ onArchivar }) => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -201,6 +202,16 @@ const MainTable = () => {
                       <Tooltip title="Editar">
                         <IconButton size="small" color="primary" onClick={() => handleAction(tramite.id)}>
                           <Edit fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+
+                      <Tooltip title="Archivar">
+                        <IconButton
+                          size="small"
+                          color="warning"
+                          onClick={() => onArchivar(tramite)}
+                        >
+                          <Archive fontSize="small" />
                         </IconButton>
                       </Tooltip>
 

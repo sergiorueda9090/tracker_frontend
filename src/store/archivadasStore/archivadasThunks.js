@@ -1,14 +1,14 @@
 import axios from "axios";
 import { handleFormStore, resetFormStore, loadForEditStore,
         handleDataStore, setPaginationPage, setPaginationPageSize,
-        clearFilters, setFilterField, handleDataHistoryStore } from "./finalizadosStore.js";
+        clearFilters, setFilterField, handleDataHistoryStore } from "./archivadasStore.js";
 
 import { showBackDropStore, hideBackDropStore, showAlert } from "../globalStore/globalStore.js";
 import { openModalShared, closeModalShared } from "../globalStore/globalStore.js";
 
 // URL de la API backend http://127.0.0.1:8000
 import { URL } from "../../constants/constantGlogal.js";
-const namespace_api      = "/api/finalizados/";
+const namespace_api      = "/api/archivadas/";
 const endpoint           = "list/";
 const endpoint_delete    = "/delete/";
 const endpoint_create    = "create/";
@@ -76,7 +76,7 @@ export const getAllThunks = ({
         await dispatch(handleDataStore({ tramites, paginado_info }));
 
       } else {
-        console.error("⚠️ Error al obtener trámites finalizados:", response);
+        console.error("⚠️ Error al obtener trámites archivadas:", response);
       }
     } catch (error) {
       console.error("❌ Error en el servidor:", error);
@@ -104,66 +104,55 @@ export const showThunk = (id = "") => {
           };
 
           try {
-            // Hacer la solicitud
             const response = await axios.request(options);
 
             if(response.status == 200){
 
-              await dispatch(loadForEditStore
-                              (
-                                {
-                                  id: response.data.id,
-                                  placa: response.data.placa,
-                                  tipo_vehiculo: response.data.tipo_vehiculo,
-                                  departamento: response.data.departamento,
-                                  municipio: response.data.municipio,
-                                  estado: response.data.estado,
-                                  estado_tracker: response.data.estado_tracker,
-                                  estado_detalle: response.data.estado_detalle,
-                                  fecha_recepcion_municipio: response.data.fecha_recepcion_municipio,
-                                  proveedor: response.data.proveedor,
-                                  preparacion: response.data.preparacion,
-                                  usuario: response.data.usuario,
-                                  created_at: response.data.created_at,
-                                }
-                              )
-                            );
+              await dispatch(loadForEditStore(
+                {
+                  id: response.data.id,
+                  placa: response.data.placa,
+                  tipo_vehiculo: response.data.tipo_vehiculo,
+                  departamento: response.data.departamento,
+                  municipio: response.data.municipio,
+                  estado: response.data.estado,
+                  estado_tracker: response.data.estado_tracker,
+                  estado_detalle: response.data.estado_detalle,
+                  fecha_recepcion_municipio: response.data.fecha_recepcion_municipio,
+                  proveedor: response.data.proveedor,
+                  preparacion: response.data.preparacion,
+                  usuario: response.data.usuario,
+                  created_at: response.data.created_at,
+                }
+              ));
 
               await dispatch(openModalShared());
-
-              await dispatch( hideBackDropStore() );
+              await dispatch(hideBackDropStore());
 
             }else{
 
-                await dispatch( hideBackDropStore() );
-
+                await dispatch(hideBackDropStore());
                 await dispatch(
                     showAlert({
                         type: "error",
                         title: "Error al mostrar el trámite",
-                        text: "Ocurrió un error al mostrar el trámite.",
+                        text: "Ocurrió un error al mostrar el trámite archivado.",
                     })
                 );
-
             }
-
 
         } catch (error) {
 
-            await dispatch( hideBackDropStore() );
-
+            await dispatch(hideBackDropStore());
             await dispatch(
                 showAlert({
                     type: "error",
                     title: "Error al mostrar el trámite",
-                    text: "Ocurrió un error al mostrar el trámite.",
+                    text: "Ocurrió un error al mostrar el trámite archivado.",
                 })
             );
-
         }
-
     }
-
 }
 
 export const createThunks = (data) => {
@@ -171,7 +160,6 @@ export const createThunks = (data) => {
     return async (dispatch, getState) => {
 
         const { authStore } = getState();
-
         const token = authStore.token;
 
         await dispatch(showBackDropStore());
@@ -187,17 +175,15 @@ export const createThunks = (data) => {
         };
 
         try {
-            // Hacer la solicitud
             const response = await axios.request(options);
 
             if (response.status == 201) {
 
                 await dispatch(resetFormStore());
-
                 await dispatch(
                     showAlert({
                         type: "success",
-                        title: "Trámite finalizado creado",
+                        title: "Trámite archivado creado",
                         text: "El trámite ha sido creado exitosamente.",
                     })
                 );
@@ -231,7 +217,6 @@ export const createThunks = (data) => {
 
             await dispatch(closeModalShared());
             await dispatch(hideBackDropStore());
-
         }
     };
 };
@@ -256,26 +241,22 @@ export const updateThunks = (id, data) => {
         }
 
         try {
-            // Hacer la solicitud
             const response = await axios.request(options);
 
             if(response.status == 201 || response.status == 200){
 
                 await dispatch(resetFormStore());
-
                 await dispatch(
                     showAlert({
                         type: "success",
                         title: "Trámite actualizado",
-                        text: "El trámite se ha actualizado correctamente.",
+                        text: "El trámite archivado se ha actualizado correctamente.",
                     })
                 );
 
-                await dispatch( getAllThunks() );
-
-                await dispatch( closeModalShared() );
-
-                await dispatch( hideBackDropStore() );
+                await dispatch(getAllThunks());
+                await dispatch(closeModalShared());
+                await dispatch(hideBackDropStore());
             }else{
 
                 await dispatch(
@@ -286,21 +267,15 @@ export const updateThunks = (id, data) => {
                     })
                 );
 
-                await dispatch( getAllThunks() );
-
-                await dispatch( closeModalShared() );
-
-                await dispatch( hideBackDropStore() );
-
+                await dispatch(getAllThunks());
+                await dispatch(closeModalShared());
+                await dispatch(hideBackDropStore());
             }
-
 
         } catch (error) {
 
-            await dispatch( closeModalShared() );
-
-            await dispatch( hideBackDropStore() );
-
+            await dispatch(closeModalShared());
+            await dispatch(hideBackDropStore());
             await dispatch(
                 showAlert({
                     type: "error",
@@ -309,11 +284,8 @@ export const updateThunks = (id, data) => {
                 })
             );
             console.error(error);
-
         }
-
     }
-
 }
 
 export const deleteThunk = (idTramite = "") => {
@@ -334,20 +306,17 @@ export const deleteThunk = (idTramite = "") => {
           };
 
           try {
-            // Hacer la solicitud
             const response = await axios.request(options);
-
-            await dispatch( hideBackDropStore() );
+            await dispatch(hideBackDropStore());
 
             if(response.status == 204){
 
-                await dispatch( getAllThunks() );
-
+                await dispatch(getAllThunks());
                 await dispatch(
                     showAlert({
                         type: "success",
                         title: "Trámite eliminado",
-                        text: "El trámite ha sido eliminado exitosamente.",
+                        text: "El trámite archivado ha sido eliminado exitosamente.",
                     })
                 );
 
@@ -360,25 +329,20 @@ export const deleteThunk = (idTramite = "") => {
                         text:  "Ocurrió un error al intentar eliminar el trámite. Inténtalo nuevamente.",
                     })
                 );
-
             }
 
         } catch (error) {
 
-            await dispatch( hideBackDropStore() );
-
+            await dispatch(hideBackDropStore());
             await dispatch(
                 showAlert({
                     type: "error",
                     title: "Error al eliminar",
-                    text:  "Servidor Ocurrió un error al intentar eliminar el trámite. Inténtalo nuevamente.",
+                    text:  "Servidor: Ocurrió un error al intentar eliminar el trámite. Inténtalo nuevamente.",
                 })
             );
-
         }
-
     }
-
 }
 
 export const handleFormStoreThunk = (data) => {
@@ -407,21 +371,17 @@ export const showhistoryThunk = (id = "") => {
           };
 
           try {
-            // Hacer la solicitud
             const response = await axios.request(options);
 
             if(response.status == 200){
 
               await dispatch(handleDataHistoryStore({ history: response.data.history }));
-
               await dispatch(openModalShared());
-
-              await dispatch( hideBackDropStore() );
+              await dispatch(hideBackDropStore());
 
             }else{
 
-                await dispatch( hideBackDropStore() );
-
+                await dispatch(hideBackDropStore());
                 await dispatch(
                     showAlert({
                         type: "error",
@@ -429,14 +389,11 @@ export const showhistoryThunk = (id = "") => {
                         text: "Ocurrió un error al mostrar el trámite.",
                     })
                 );
-
             }
-
 
         } catch (error) {
 
-            await dispatch( hideBackDropStore() );
-
+            await dispatch(hideBackDropStore());
             await dispatch(
                 showAlert({
                     type: "error",
@@ -444,23 +401,18 @@ export const showhistoryThunk = (id = "") => {
                     text: "Ocurrió un error al mostrar el trámite.",
                 })
             );
-
         }
-
     }
-
 }
 
 /* Paginación */
 export const handlePageChange = (newPage) => {
   return async (dispatch, getState) => {
-    const { finalizadosStore } = getState();
-    const { paginado_info, filters } = finalizadosStore;
+    const { archivadasStore } = getState();
+    const { paginado_info, filters } = archivadasStore;
 
-    // Actualizar la página en Redux
     await dispatch(setPaginationPage(newPage));
 
-    // Llamar al endpoint con la nueva página
     await dispatch(getAllThunks({
       page: newPage,
       page_size: paginado_info.page_size,
@@ -478,13 +430,11 @@ export const handlePageChange = (newPage) => {
 
 export const handlePageSizeChange = (newPageSize) => {
   return async (dispatch, getState) => {
-    const { finalizadosStore } = getState();
-    const { filters } = finalizadosStore;
+    const { archivadasStore } = getState();
+    const { filters } = archivadasStore;
 
-    // Actualizar el page_size en Redux
     await dispatch(setPaginationPageSize(newPageSize));
 
-    // Llamar al endpoint con el nuevo tamaño (página 1)
     await dispatch(getAllThunks({
       page: 1,
       page_size: newPageSize,
@@ -503,19 +453,17 @@ export const handlePageSizeChange = (newPageSize) => {
 /* filtros */
 export const filterFieldThunk = (data) => {
     return async (dispatch) => {
-      console.log("Dispatching filterFieldThunk with data:", data);
       dispatch(setFilterField({ field: data.field, value: data.value }));
     };
 };
 
 export const applyFilters = (filterData) => {
   return async (dispatch, getState) => {
-    const { finalizadosStore } = getState();
-    const { paginado_info } = finalizadosStore;
+    const { archivadasStore } = getState();
+    const { paginado_info } = archivadasStore;
 
-    // Llamar al endpoint con los nuevos filtros
     await dispatch(getAllThunks({
-      page: 1, // Volver a la primera página
+      page: 1,
       page_size: paginado_info.page_size,
       search: filterData.search,
       estado: filterData.estado,
@@ -531,71 +479,14 @@ export const applyFilters = (filterData) => {
 
 export const handleClearFilters = () => {
   return async (dispatch, getState) => {
-    // Limpiar filtros en Redux
     await dispatch(clearFilters());
 
-    const { finalizadosStore } = getState();
-    const { paginado_info } = finalizadosStore;
+    const { archivadasStore } = getState();
+    const { paginado_info } = archivadasStore;
 
-    // Llamar al endpoint sin filtros
     await dispatch(getAllThunks({
       page: 1,
       page_size: paginado_info.page_size,
     }));
-  };
-};
-
-/* ARCHIVAR FINALIZADO */
-export const archivarFinalizadoThunk = (id, placa) => {
-  return async (dispatch, getState) => {
-    const { authStore } = getState();
-    const token = authStore.token;
-
-    await dispatch(showBackDropStore());
-
-    const options = {
-      method: 'POST',
-      url: `${URL}${namespace_api}${id}/archivar/`,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    };
-
-    try {
-      const response = await axios.request(options);
-
-      if (response.status === 200) {
-        await dispatch(hideBackDropStore());
-        await dispatch(
-          showAlert({
-            type: "success",
-            title: "Trámite Archivado",
-            text: `El trámite con placa "${placa}" ha sido archivado exitosamente.`,
-          })
-        );
-
-        // Recargar la lista para reflejar el cambio
-        await dispatch(getAllThunks());
-
-      } else {
-        await dispatch(hideBackDropStore());
-        await dispatch(
-          showAlert({
-            type: "error",
-            title: "Error al archivar",
-            text: "No se pudo archivar el trámite. Inténtalo nuevamente.",
-          })
-        );
-      }
-    } catch (error) {
-      await dispatch(hideBackDropStore());
-      await dispatch(
-        showAlert({
-          type: "error",
-          title: "Error al archivar",
-          text: error.response?.data?.error || "Ocurrió un error al archivar el trámite. Inténtalo nuevamente.",
-        })
-      );
-    }
   };
 };
