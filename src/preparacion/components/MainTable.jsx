@@ -48,8 +48,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { showAlert } from "../../store/globalStore/globalStore";
 
-import { getAllThunks, showThunk, deleteThunk, deleteArchivoThunk, showhistoryThunk } from '../../store/preparacionStore/preparacionThunks';
+import { getAllThunks, showThunk, deleteThunk, deleteArchivoThunk, showhistoryThunk, sendToTrackerThunk } from '../../store/preparacionStore/preparacionThunks';
+import { deleteTramiteRealtime } from '../../store/preparacionStore/preparacionStore';
 import Pagination from './Pagination';
+import useWebSocket from '../../hooks/useWebSocket';
 
 const MainTable = () => {
 
@@ -64,6 +66,35 @@ const MainTable = () => {
   const [openFilesDialog, setOpenFilesDialog] = useState(false);
   const [selectedTramite, setSelectedTramite] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
+
+  // WebSocket para actualizaciones en tiempo real
+  const { lastMessage } = useWebSocket('/ws/preparacion/');
+
+  // Manejar mensajes WebSocket en tiempo real
+  useEffect(() => {
+    if (!lastMessage) return;
+
+    const { type, data } = lastMessage;
+
+    switch (type) {
+      case 'preparacion_deleted':
+        // Eliminar trámite de la lista en tiempo real
+        if (data.reason === 'enviado_tracker') {
+          console.log('✅ Trámite enviado al Tracker, eliminando de la lista:', data.id);
+        }
+        dispatch(deleteTramiteRealtime(data.id));
+        break;
+
+      case 'preparacion_created':
+      case 'preparacion_updated':
+      case 'archivo_deleted':
+        // Estos ya están manejados en otros componentes
+        break;
+
+      default:
+        console.log('📩 Mensaje WebSocket no manejado:', type);
+    }
+  }, [lastMessage, dispatch]);
 
   const handleAction = (id) => {
     dispatch(showThunk(id));
@@ -190,6 +221,20 @@ const MainTable = () => {
   const handleVerTrazabilidad = (id) => {
     //dispatch(showhistoryThunk(id));
     navigate(`/preparacion/history/${id}`);
+  };
+
+  // Handler para enviar al Tracker
+  const handleSendToTracker = (tramite) => {
+    dispatch(showAlert({
+      type: "info",
+      title: "📤 Enviar al Tracker",
+      text: `¿Está seguro que desea enviar el trámite con placa "${tramite.placa}" al módulo Tracker? Esta acción moverá el trámite al siguiente flujo de trabajo.`,
+      confirmText: "Sí, enviar al Tracker",
+      cancelText: "Cancelar",
+      action: async () => {
+        await dispatch(sendToTrackerThunk(tramite.id));
+      }
+    }));
   };
 
   return (
@@ -331,9 +376,10 @@ const MainTable = () => {
                     </Tooltip>
 
                     <Tooltip title="Enviar al Tracker">
-                      <IconButton 
-                        size="small" 
-                        color="success" 
+                      <IconButton
+                        size="small"
+                        color="success"
+                        onClick={() => handleSendToTracker(tramite)}
                       >
                         <Send fontSize="small" />
                       </IconButton>

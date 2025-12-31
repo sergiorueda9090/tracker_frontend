@@ -17,14 +17,14 @@ const MainHeader = ({ onAddNew }) => {
           Gestión y seguimiento de trámites en radicación
         </Typography>
       </Box>
-      <Button
+      {/*<Button
         variant="contained"
         startIcon={<Add />}
         className="action-button"
         onClick={onAddNew}
       >
         Nuevo Trámite
-      </Button>
+      </Button>*/}
     </Box>
   );
 };

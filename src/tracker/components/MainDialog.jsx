@@ -21,15 +21,13 @@ const MainDialog = ({ open, onClose }) => {
 
   const {
     id, placa, departamento, municipio, tipo_vehiculo,
-    estado, estado_detalle, fecha_recepcion_municipio, proveedor, preparacion
+    estado, estado_detalle, fecha_recepcion_municipio, proveedor, preparacion, estado_tracker
   } = useSelector(state => state.trackerStore);
 
   const { departamentos, municipios } = useSelector(state => state.departamentosMunicipiosStore);
   const { providers } = useSelector(state => state.proveedoresStore);
   const {  tramites }   = useSelector(state => state.preparacionStore);
 
-  console.log("Tramites:", tramites);
-  console.log("providers:", providers);
 
   useEffect(() => {
     dispatch(getAllDepartamentos());
@@ -47,21 +45,23 @@ const MainDialog = ({ open, onClose }) => {
 
   // Tipos de vehículo
   const tiposVehiculo = [
-    'AUTOMOVIL',
-    'MOTOCICLETA',
-    'CAMIONETA',
-    'CAMION',
-    'BUS',
-    'TAXI',
-    'OTRO'
+    'Automóvil',
+    'Motocicleta',
+    'Camioneta',
+    'Camión',
+    'Bus',
+    'Taxi',
+    'Otro'
   ];
 
   // Estados disponibles
   const estadosDisponibles = [
-    { value: 'EN_RADICACION', label: 'En Radicación' },
-    { value: 'CON_NOVEDAD', label: 'Con Novedad' },
-    { value: 'FINALIZADO', label: 'Finalizado' },
+    { value: 'sin_tracker', label: 'Sin Tracker' },
+    { value: 'en_radicacion', label: 'En Radicación' },
+    { value: 'con_novedad', label: 'Con Novedad' },
+    { value: 'finalizado', label: 'Finalizado' },
   ];
+
 
   const handleChangeForm = (e) => {
     const { name, value } = e.target;
@@ -88,6 +88,7 @@ const MainDialog = ({ open, onClose }) => {
       fecha_recepcion_municipio: fecha_recepcion_municipio || null,
       proveedor: proveedor || null,
       preparacion: preparacion || null,
+      estado_tracker: estado_tracker || 'sin_tracker',
     };
 
     if (id) {
@@ -200,8 +201,8 @@ const MainDialog = ({ open, onClose }) => {
               fullWidth
               select
               label="Estado del Trámite"
-              name="estado"
-              value={estado || 'EN_RADICACION'}
+              name="estado_tracker"
+              value={estado_tracker || 'sin_tracker'}
               onChange={handleChangeForm}
             >
               {estadosDisponibles.map((est) => (

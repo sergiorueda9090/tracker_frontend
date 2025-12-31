@@ -82,6 +82,15 @@ const Main = () => {
         });
       }
 
+      else if (lastMessage.type === 'preparacion_sent_to_tracker') {
+        dispatch(deleteTramiteRealtime(lastMessage.data.id));
+        setNotification({
+          open: true,
+          message: `➡️ Trámite enviado a Tracker: ${lastMessage.data.placa}`,
+          severity: 'info'
+        });
+      }
+
       // Cambio de estado
       else if (lastMessage.type === 'preparacion_status_changed') {
         dispatch(updateTramiteRealtime(lastMessage.data));

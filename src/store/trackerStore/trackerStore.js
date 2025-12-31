@@ -1,20 +1,31 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  // Datos del Formulario de Tracker (CRUD)
+  // Datos del Formulario de Tracker (CRUD) - Ahora usa modelo Preparacion con estado_modulo=2
   id: null,
   placa: '',
   departamento: '',
   municipio: '',
   tipo_vehiculo: '',
-  estado: 'EN_RADICACION', // EN_RADICACION, CON_NOVEDAD, FINALIZADO
+  estado: 'en_radicacion', // en_radicacion, con_novedad, finalizado (minúsculas)
+  estado_tracker: 'sin_tracker', // sin_tracker, en_radicacion, con_novedad, finalizado (minúsculas)
   estado_detalle: '',
   fecha_recepcion_municipio: '',
   proveedor: '',
-  preparacion: '',
+  paquete: '', // Nuevo: heredado de Preparacion
+  lista_documentos: [], // Nuevo: heredado de Preparacion
+  archivos: [], // Nuevo: heredado de Preparacion
   usuario: '',
   created_at: null,
- 
+
+  // Campos computados (read-only) del modelo Preparacion
+  documentos_completos: false,
+  documentos_completados: 0,
+  total_documentos: 0,
+  total_archivos: 0,
+  hace_dias: null,
+  codigo_encargado: '',
+
   // Lista de trámites en tracker y control de UI
   tramites: [],
   history: [],
@@ -76,14 +87,24 @@ export const trackerStore = createSlice({
       state.departamento = '';
       state.municipio = '';
       state.tipo_vehiculo = '';
-      state.estado = 'EN_RADICACION';
+      state.estado = 'en_radicacion'; // Minúsculas
+      state.estado_tracker = 'sin_tracker'; // Minúsculas
       state.estado_detalle = '';
       state.fecha_recepcion_municipio = '';
       state.proveedor = '';
-      state.preparacion = '';
+      state.paquete = '';
+      state.lista_documentos = [];
+      state.archivos = [];
       state.history = [];
       state.usuario = '';
       state.created_at = null;
+      // Reset computed fields
+      state.documentos_completos = false;
+      state.documentos_completados = 0;
+      state.total_documentos = 0;
+      state.total_archivos = 0;
+      state.hace_dias = null;
+      state.codigo_encargado = '';
     },
 
     // Carga un trámite existente en el formulario para edición
@@ -94,13 +115,23 @@ export const trackerStore = createSlice({
       state.departamento = tramite.departamento || '';
       state.municipio = tramite.municipio || '';
       state.tipo_vehiculo = tramite.tipo_vehiculo || '';
-      state.estado = tramite.estado || 'EN_RADICACION';
+      state.estado = tramite.estado || 'en_radicacion';
+      state.estado_tracker = tramite.estado_tracker || 'sin_tracker';
       state.estado_detalle = tramite.estado_detalle || '';
       state.fecha_recepcion_municipio = tramite.fecha_recepcion_municipio || '';
       state.proveedor = tramite.proveedor || '';
-      state.preparacion = tramite.preparacion || '';
+      state.paquete = tramite.paquete || '';
+      state.lista_documentos = tramite.lista_documentos || [];
+      state.archivos = tramite.archivos || [];
       state.usuario = tramite.usuario || '';
       state.created_at = tramite.created_at || null;
+      // Load computed fields
+      state.documentos_completos = tramite.documentos_completos || false;
+      state.documentos_completados = tramite.documentos_completados || 0;
+      state.total_documentos = tramite.total_documentos || 0;
+      state.total_archivos = tramite.total_archivos || 0;
+      state.hace_dias = tramite.hace_dias;
+      state.codigo_encargado = tramite.codigo_encargado || '';
     },
 
     // Control de paginación
@@ -142,15 +173,30 @@ export const trackerStore = createSlice({
     // Agregar nuevo trámite recibido por WebSocket
     addTramiteRealtime: (state, action) => {
       const newTramite = action.payload;
-      // Agregar al inicio de la lista
-      state.tramites = [newTramite, ...state.tramites];
-      // Actualizar contador
-      state.paginado_info.count = state.paginado_info.count + 1;
-      state.paginado_info.total_pages = Math.ceil(state.paginado_info.count / state.paginado_info.page_size);
+      
+      // ✅ VERIFICAR SI YA EXISTE ANTES DE AGREGAR
+      const exists = state.tramites.some(t => t.id === newTramite.id);
+      
+      if (!exists) {
+        // Agregar al inicio de la lista
+        state.tramites = [newTramite, ...state.tramites];
+        
+        // Actualizar contador
+        state.paginado_info.count = state.paginado_info.count + 1;
+        state.paginado_info.total_pages = Math.ceil(
+          state.paginado_info.count / state.paginado_info.page_size
+        );
 
-      // Si excede el tamaño de página, remover el último elemento
-      if (state.tramites.length > state.paginado_info.page_size) {
-        state.tramites.pop();
+        // Si excede el tamaño de página, remover el último elemento
+        if (state.tramites.length > state.paginado_info.page_size) {
+          state.tramites.pop();
+        }
+      } else {
+        // Si ya existe, actualizar en su lugar
+        const index = state.tramites.findIndex(t => t.id === newTramite.id);
+        if (index !== -1) {
+          state.tramites[index] = newTramite;
+        }
       }
     },
 

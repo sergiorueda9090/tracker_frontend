@@ -118,6 +118,7 @@ export const showThunk = (id = "") => {
                                   departamento: response.data.departamento,
                                   municipio: response.data.municipio,
                                   estado: response.data.estado,
+                                  estado_tracker: response.data.estado_tracker,
                                   estado_detalle: response.data.estado_detalle,
                                   fecha_recepcion_municipio: response.data.fecha_recepcion_municipio,
                                   proveedor: response.data.proveedor,

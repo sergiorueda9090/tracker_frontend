@@ -598,3 +598,67 @@ export const showhistoryThunk = (id = "") => {
     }
 
 }
+// Enviar trámite al Tracker
+export const sendToTrackerThunk = (tramiteId) => {
+  return async (dispatch, getState) => {
+    const { authStore } = getState();
+    const token = authStore.token;
+
+    await dispatch(showBackDropStore());
+
+    const options = {
+      method: 'POST',
+      url: `${URL}${namespace_api}${tramiteId}/send-to-tracker/`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      data: {}  // Puede incluir proveedor_id si es necesario
+    };
+
+    try {
+      const response = await axios.request(options);
+
+      await dispatch(hideBackDropStore());
+
+      if (response.status === 200) {
+
+        await dispatch(
+          showAlert({
+            type: "success",
+            title: "✅ Enviado al Tracker",
+            text: `El trámite ha sido enviado al módulo Tracker exitosamente.`,
+          })
+        );
+
+        // No necesitamos refrescar manualmente porque el WebSocket lo hará automáticamente
+        return { success: true, tracker_id: response.data.tracker_id };
+        
+      } else {
+        await dispatch(
+          showAlert({
+            type: "error",
+            title: "Error al enviar",
+            text: "Ocurrió un error al enviar el trámite al Tracker.",
+          })
+        );
+        return { success: false };
+      }
+    } catch (error) {
+      await dispatch(hideBackDropStore());
+
+      const errorMessage = error.response?.data?.error || "Error del servidor al enviar el trámite.";
+
+      await dispatch(
+        showAlert({
+          type: "error",
+          title: "Error al enviar",
+          text: errorMessage,
+        })
+      );
+
+      console.error("Error al enviar trámite al Tracker:", error);
+      return { success: false };
+    }
+  };
+};
