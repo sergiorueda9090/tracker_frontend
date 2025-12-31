@@ -27,7 +27,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { showAlert } from "../../store/globalStore/globalStore";
 
-import { getAllThunks, showThunk, deleteThunk, showhistoryThunk } from '../../store/trackerStore/trackerThunks';
+import { getAllThunks, showThunk, deleteThunk, showhistoryThunk } from '../../store/finalizadosStore/finalizadosThunks';
 import Pagination from './Pagination';
 
 const MainTable = () => {
@@ -37,7 +37,7 @@ const MainTable = () => {
 
   useEffect(() => { dispatch(getAllThunks()); }, [dispatch]);
 
-  const { tramites } = useSelector(state => state.trackerStore);
+  const { tramites } = useSelector(state => state.finalizadosStore);
 
   const handleAction = (id) => {
     dispatch(showThunk(id));
@@ -47,7 +47,7 @@ const MainTable = () => {
     dispatch(showAlert({
       type: "warning",
       title: "⚠️ Confirmación de Eliminación",
-      text: `¿Está seguro que desea eliminar el trámite con placa "${tramite.placa}"? Esta acción es permanente y no se podrá deshacer.`,
+      text: `¿Está seguro que desea eliminar el trámite finalizado con placa "${tramite.placa}"? Esta acción es permanente y no se podrá deshacer.`,
       confirmText: "Sí, eliminar trámite",
       cancelText: "Cancelar",
       action: () => {
@@ -57,8 +57,7 @@ const MainTable = () => {
   };
 
   const handleVerTrazabilidad = (id) => {
-    //dispatch(showhistoryThunk(id));
-    navigate(`/tracker/history/${id}`);
+    navigate(`/finalizados/history/${id}`);
   };
 
   // Función para obtener el chip de estado
@@ -220,18 +219,6 @@ const MainTable = () => {
                           <History fontSize="small" />
                         </IconButton>
                       </Tooltip>
-
-                      <Tooltip title="Finalizar Trámite">
-                        <IconButton
-                          size="small"
-                          color="success"
-                          onClick={() => handleVerTrazabilidad(tramite.id)}
-                        >
-                          <DoneAll fontSize="small" />
-                        </IconButton>
-                      </Tooltip>
-
-                      
                     </Box>
                   </TableCell>
                 </TableRow>

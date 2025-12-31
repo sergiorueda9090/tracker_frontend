@@ -1,14 +1,14 @@
 import axios from "axios";
 import { handleFormStore, resetFormStore, loadForEditStore,
         handleDataStore, setPaginationPage, setPaginationPageSize,
-        clearFilters, setFilterField, handleDataHistoryStore } from "./trackerStore.js";
+        clearFilters, setFilterField, handleDataHistoryStore } from "./finalizadosStore.js";
 
 import { showBackDropStore, hideBackDropStore, showAlert } from "../globalStore/globalStore.js";
 import { openModalShared, closeModalShared } from "../globalStore/globalStore.js";
 
 // URL de la API backend http://127.0.0.1:8000
 import { URL } from "../../constants/constantGlogal.js";
-const namespace_api      = "/api/tracker/";
+const namespace_api      = "/api/finalizados/";
 const endpoint           = "list/";
 const endpoint_delete    = "/delete/";
 const endpoint_create    = "create/";
@@ -76,7 +76,7 @@ export const getAllThunks = ({
         await dispatch(handleDataStore({ tramites, paginado_info }));
 
       } else {
-        console.error("⚠️ Error al obtener trámites:", response);
+        console.error("⚠️ Error al obtener trámites finalizados:", response);
       }
     } catch (error) {
       console.error("❌ Error en el servidor:", error);
@@ -197,7 +197,7 @@ export const createThunks = (data) => {
                 await dispatch(
                     showAlert({
                         type: "success",
-                        title: "Trámite creado",
+                        title: "Trámite finalizado creado",
                         text: "El trámite ha sido creado exitosamente.",
                     })
                 );
@@ -454,8 +454,8 @@ export const showhistoryThunk = (id = "") => {
 /* Paginación */
 export const handlePageChange = (newPage) => {
   return async (dispatch, getState) => {
-    const { trackerStore } = getState();
-    const { paginado_info, filters } = trackerStore;
+    const { finalizadosStore } = getState();
+    const { paginado_info, filters } = finalizadosStore;
 
     // Actualizar la página en Redux
     await dispatch(setPaginationPage(newPage));
@@ -478,8 +478,8 @@ export const handlePageChange = (newPage) => {
 
 export const handlePageSizeChange = (newPageSize) => {
   return async (dispatch, getState) => {
-    const { trackerStore } = getState();
-    const { filters } = trackerStore;
+    const { finalizadosStore } = getState();
+    const { filters } = finalizadosStore;
 
     // Actualizar el page_size en Redux
     await dispatch(setPaginationPageSize(newPageSize));
@@ -510,8 +510,8 @@ export const filterFieldThunk = (data) => {
 
 export const applyFilters = (filterData) => {
   return async (dispatch, getState) => {
-    const { trackerStore } = getState();
-    const { paginado_info } = trackerStore;
+    const { finalizadosStore } = getState();
+    const { paginado_info } = finalizadosStore;
 
     // Llamar al endpoint con los nuevos filtros
     await dispatch(getAllThunks({
@@ -534,66 +534,13 @@ export const handleClearFilters = () => {
     // Limpiar filtros en Redux
     await dispatch(clearFilters());
 
-    const { trackerStore } = getState();
-    const { paginado_info } = trackerStore;
+    const { finalizadosStore } = getState();
+    const { paginado_info } = finalizadosStore;
 
     // Llamar al endpoint sin filtros
     await dispatch(getAllThunks({
       page: 1,
       page_size: paginado_info.page_size,
     }));
-  };
-};
-
-/* Finalizar trámite */
-export const finalizarTramiteThunk = (idTramite, placa) => {
-  return async (dispatch, getState) => {
-    const { authStore } = getState();
-    const token = authStore.token;
-
-    await dispatch(showBackDropStore());
-
-    const options = {
-      method: 'POST',
-      url: `${URL}${namespace_api}${idTramite}/finalizar/`,
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-      data: {
-        estado_detalle: 'Trámite finalizado desde Tracker'
-      }
-    };
-
-    try {
-      const response = await axios.request(options);
-
-      await dispatch(hideBackDropStore());
-
-      if (response.status === 200) {
-        await dispatch(showAlert({
-          type: "success",
-          title: "✅ Trámite Finalizado",
-          text: `El trámite con placa "${placa}" ha sido finalizado exitosamente y movido a Finalizados.`,
-        }));
-
-        // Recargar la lista de trackers
-        await dispatch(getAllThunks());
-      } else {
-        await dispatch(showAlert({
-          type: "error",
-          title: "Error al finalizar",
-          text: "Ocurrió un error al intentar finalizar el trámite. Inténtalo nuevamente.",
-        }));
-      }
-    } catch (error) {
-      await dispatch(hideBackDropStore());
-
-      await dispatch(showAlert({
-        type: "error",
-        title: "Error al finalizar",
-        text: error.response?.data?.error || "Ocurrió un error al intentar finalizar el trámite. Inténtalo nuevamente.",
-      }));
-    }
   };
 };

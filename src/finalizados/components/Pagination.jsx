@@ -14,13 +14,13 @@ import {
   NavigateNext,
 } from '@mui/icons-material';
 import { useSelector, useDispatch } from 'react-redux';
-import { handlePageChange, handlePageSizeChange } from '../../store/trackerStore/trackerThunks';
+import { handlePageChange, handlePageSizeChange } from '../../store/finalizadosStore/finalizadosThunks';
 import '../../styles/Pagination.css';
 
 const Pagination = () => {
   const dispatch = useDispatch();
 
-  const { paginado_info } = useSelector(state => state.trackerStore);
+  const { paginado_info } = useSelector(state => state.finalizadosStore);
   const { count, current_page, total_pages, page_size } = paginado_info;
 
   const startIndex = count === 0 ? 0 : (current_page - 1) * page_size + 1;

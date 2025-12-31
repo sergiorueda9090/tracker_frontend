@@ -13,6 +13,7 @@ import Tracker from '../tracker/Main';
 import TrackerHistory from '../tracker/History';
 
 import Finalizados from '../finalizados/Main';
+import FinalizadosHistory from '../finalizados/History';
 
 import Settings   from '../pages/Settings';
 
@@ -100,6 +101,15 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <Finalizados />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/finalizados/history/:id"
+        element={
+          <ProtectedRoute>
+            <FinalizadosHistory />
           </ProtectedRoute>
         }
       />

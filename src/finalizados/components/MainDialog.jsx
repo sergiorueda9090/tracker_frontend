@@ -8,7 +8,7 @@ import {
   DirectionsCar, LocationOn, Assignment
 } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
-import { handleFormStoreThunk, createThunks, updateThunks } from '../../store/trackerStore/trackerThunks';
+import { handleFormStoreThunk, createThunks, updateThunks } from '../../store/finalizadosStore/finalizadosThunks';
 import { getAllThunks as getAllDepartamentos, showThunk as showMunicipios } from '../../store/departamentosMunicipiosStore/departamentosMunicipiosThunks';
 import { getAllThunks as getAllProveedores } from '../../store/proveedoresStore/proveedoresThunks';
 
@@ -22,7 +22,7 @@ const MainDialog = ({ open, onClose }) => {
   const {
     id, placa, departamento, municipio, tipo_vehiculo,
     estado, estado_detalle, fecha_recepcion_municipio, proveedor, preparacion
-  } = useSelector(state => state.trackerStore);
+  } = useSelector(state => state.finalizadosStore);
 
   const { departamentos, municipios } = useSelector(state => state.departamentosMunicipiosStore);
   const { providers } = useSelector(state => state.proveedoresStore);

@@ -46,7 +46,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { showAlert } from "../../store/globalStore/globalStore";
 
-import { getAllThunks, showThunk, deleteThunk, showhistoryThunk } from '../../store/trackerStore/trackerThunks';
+import { getAllThunks, showThunk, deleteThunk, showhistoryThunk, finalizarTramiteThunk } from '../../store/trackerStore/trackerThunks';
 import { deleteArchivoThunk } from '../../store/preparacionStore/preparacionThunks';
 import { addTramiteRealtime } from '../../store/trackerStore/trackerStore';
 import Pagination from './Pagination';
@@ -123,6 +123,19 @@ const MainTable = () => {
   const handleVerTrazabilidad = (id) => {
     //dispatch(showhistoryThunk(id));
     navigate(`/tracker/history/${id}`);
+  };
+
+  const handleFinalizarTramite = (tramite) => {
+    dispatch(showAlert({
+      type: "warning",
+      title: "🎯 Finalizar Trámite",
+      text: `¿Está seguro que desea finalizar el trámite con placa "${tramite.placa}"? El trámite será movido automáticamente al módulo Finalizados.`,
+      confirmText: "Sí, finalizar trámite",
+      cancelText: "Cancelar",
+      action: () => {
+        dispatch(finalizarTramiteThunk(tramite.id, tramite.placa));
+      }
+    }));
   };
 
   // Función para obtener el chip de estado
@@ -440,7 +453,7 @@ const MainTable = () => {
                         <IconButton
                           size="small"
                           color="success"
-                          onClick={() => handleVerTrazabilidad(tramite.id)}
+                          onClick={() => handleFinalizarTramite(tramite)}
                         >
                           <DoneAll fontSize="small" />
                         </IconButton>

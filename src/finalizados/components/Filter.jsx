@@ -18,12 +18,12 @@ import {
   DirectionsCar,
 } from '@mui/icons-material';
 import { useSelector, useDispatch } from 'react-redux';
-import { filterFieldThunk, applyFilters, handleClearFilters } from '../../store/trackerStore/trackerThunks';
+import { filterFieldThunk, applyFilters, handleClearFilters } from '../../store/finalizadosStore/finalizadosThunks';
 import '../../styles/Filter.css';
 
 const Filter = () => {
   const dispatch = useDispatch();
-  const { filters } = useSelector(state => state.trackerStore);
+  const { filters } = useSelector(state => state.finalizadosStore);
 
   // Contar filtros activos
   const activeFiltersCount = Object.values(filters).filter(value => value !== '').length;

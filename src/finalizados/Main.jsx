@@ -7,11 +7,10 @@ import MainDialog from './components/MainDialog';
 import { openModalShared, closeModalShared } from "../store/globalStore/globalStore";
 import {
   resetFormStore,
-  addTramiteRealtime,
-  updateTramiteRealtime,
-  deleteTramiteRealtime,
-  deleteArchivoRealtime
-} from "../store/trackerStore/trackerStore";
+  addTramiteStore,
+  updateTramiteStore,
+  removeTramiteStore
+} from "../store/finalizadosStore/finalizadosStore";
 import { useSelector, useDispatch } from 'react-redux';
 
 import '../styles/Pages.css';
@@ -26,7 +25,7 @@ const Main = () => {
   const { openModalStore } = useSelector(state => state.globalStore);
 
   // Conectar a WebSocket
-  const { isConnected, lastMessage, sendMessage } = useWebSocket('/ws/tracker/');
+  const { isConnected, lastMessage, sendMessage } = useWebSocket('/ws/finalizados/');
 
   // Estado para notificaciones
   const [notification, setNotification] = React.useState({
@@ -38,45 +37,45 @@ const Main = () => {
   // Manejar mensajes recibidos del WebSocket
   useEffect(() => {
     if (lastMessage) {
-      console.log('📩 Nuevo mensaje WebSocket Tracker:', lastMessage);
+      console.log('📩 Nuevo mensaje WebSocket Finalizados:', lastMessage);
 
       // Conexión establecida
       if (lastMessage.type === 'connection_established') {
         setNotification({
           open: true,
-          message: '✅ Conectado a actualizaciones de Tracker en tiempo real',
+          message: '✅ Conectado a actualizaciones de Finalizados en tiempo real',
           severity: 'success'
         });
       }
 
-      // Nuevo tracker creado
-      else if (lastMessage.type === 'tracker_created') {
-        
-        dispatch(addTramiteRealtime(lastMessage.data));
+      // Nuevo trámite finalizado creado
+      else if (lastMessage.type === 'finalizado_created') {
+
+        dispatch(addTramiteStore(lastMessage.data));
 
         setNotification({
           open: true,
-          message: `🆕 Nuevo trámite en Tracker: ${lastMessage.data.placa}`,
-          severity: 'info'
+          message: `🆕 Nuevo trámite finalizado: ${lastMessage.data.placa}`,
+          severity: 'success'
         });
-      
+
       }
 
-      // Tracker actualizado
-      else if (lastMessage.type === 'tracker_updated') {
-        
-        dispatch(updateTramiteRealtime(lastMessage.data));
+      // Trámite finalizado actualizado
+      else if (lastMessage.type === 'finalizado_updated') {
+
+        dispatch(updateTramiteStore(lastMessage.data));
 
         setNotification({
           open: true,
-          message: `✏️ Trámite actualizado en Tracker: ${lastMessage.data.placa}`,
+          message: `✏️ Trámite actualizado: ${lastMessage.data.placa}`,
           severity: 'info'
         });
       }
 
-      // Tracker eliminado
-      else if (lastMessage.type === 'tracker_deleted') {
-        dispatch(deleteTramiteRealtime(lastMessage.data.id));
+      // Trámite finalizado eliminado
+      else if (lastMessage.type === 'finalizado_deleted') {
+        dispatch(removeTramiteStore(lastMessage.data.id));
         setNotification({
           open: true,
           message: `🗑️ Trámite eliminado: ${lastMessage.data.placa || 'ID: ' + lastMessage.data.id}`,

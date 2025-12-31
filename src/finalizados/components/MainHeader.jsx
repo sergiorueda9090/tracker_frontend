@@ -11,10 +11,10 @@ const MainHeader = ({ onAddNew }) => {
     <Box className="page-header-actions">
       <Box>
         <Typography variant="h4" className="page-title">
-          Tracker de Trámites
+          Trámites Finalizados
         </Typography>
         <Typography variant="body2" sx={{ color: '#64748B', mt: 0.5 }}>
-          Gestión y seguimiento de trámites en radicación
+          Gestión de trámites completados y archivados
         </Typography>
       </Box>
       <Button
