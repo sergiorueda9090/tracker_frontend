@@ -33,6 +33,7 @@ import {
   TrackChanges,
   Archive,
   Description,
+  DoneAll
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './styles/Sidebar.css';
@@ -54,6 +55,7 @@ const Sidebar = ({ open, onClose, drawerWidth = 280 }) => {
     
     { text: 'En Preparación', icon: <HourglassEmpty />, path: '/preparacion' },
     { text: 'Tracker', icon: <TrackChanges />, path: '/tracker' },
+    { text: 'Finalizados', icon: <DoneAll />, path: '/finalizados' },
     { text: 'Archivados', icon: <Archive />, path: '/archivados' },
     { text: 'Facturación', icon: <Receipt />, path: '/facturacion' },
   ];

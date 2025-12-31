@@ -329,6 +329,15 @@ const MainTable = () => {
                         <History fontSize="small" />
                       </IconButton>
                     </Tooltip>
+
+                    <Tooltip title="Enviar al Tracker">
+                      <IconButton 
+                        size="small" 
+                        color="success" 
+                      >
+                        <Send fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
                   </Box>
                 </TableCell>
 

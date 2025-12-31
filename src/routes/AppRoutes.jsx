@@ -5,10 +5,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import Dashboard  from '../pages/Dashboard';
 import Usuarios   from '../usuarios/Main';
 import Proveedores from '../proveedores/Main';
+
 import Preparacion from '../preparacion/Main';
 import PreparacionHistory from '../preparacion/History';
+
 import Tracker from '../tracker/Main';
 import TrackerHistory from '../tracker/History';
+
+import Finalizados from '../finalizados/Main';
+
 import Settings   from '../pages/Settings';
 
 // Componente de ruta protegida
@@ -86,6 +91,15 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <TrackerHistory />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/finalizados"
+        element={
+          <ProtectedRoute>
+            <Finalizados />
           </ProtectedRoute>
         }
       />
