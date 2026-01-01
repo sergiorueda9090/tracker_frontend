@@ -192,7 +192,7 @@ const Login = () => {
           </form>
         </Paper>
 
-        {/* Footer */}
+        {/* Footer 
         <Box className="login-footer-main">
           <Box className="login-footer-content">
             <Typography variant="body2" className="login-footer-copyright">
@@ -213,6 +213,7 @@ const Login = () => {
             </Box>
           </Box>
         </Box>
+        */}
       </Container>
       
       <SimpleBackdrop />
