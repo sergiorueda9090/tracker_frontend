@@ -204,7 +204,7 @@ const Navbar = ({ onMenuClick, drawerWidth = 280 }) => {
           Tracker - Gestión de Trámites
         </Typography>
 
-        {/* Barra de búsqueda */}
+        {/* Barra de búsqueda 
         {!isMobile && (
           <Box className="navbar-search-container">
             <Box className="navbar-search">
@@ -217,6 +217,7 @@ const Navbar = ({ onMenuClick, drawerWidth = 280 }) => {
             </Box>
           </Box>
         )}
+        */}
 
         {/* Espaciador */}
         <Box sx={{ flexGrow: 1 }} />
