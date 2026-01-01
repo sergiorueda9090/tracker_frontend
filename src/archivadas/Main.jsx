@@ -1,42 +1,31 @@
 import React, { useEffect } from 'react';
+import { Box, Snackbar, Alert, Chip } from '@mui/material';
+import MainHeader from './components/MainHeader';
+import MainTable from './components/MainTable';
+import MainDialog from './components/MainDialog';
+
+import { openModalShared, closeModalShared, showAlert } from "../store/globalStore/globalStore";
 import {
-  Box,
-  Typography,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Chip,
-  Snackbar,
-  Alert,
-  IconButton,
-  Tooltip
-} from '@mui/material';
-import {
-  Visibility as VisibilityIcon,
-  Delete as DeleteIcon,
-  Archive as ArchiveIcon
-} from '@mui/icons-material';
-import { useSelector, useDispatch } from 'react-redux';
-import {
+  resetFormStore,
   addTramiteStore,
   updateTramiteStore,
   removeTramiteStore
 } from "../store/archivadasStore/archivadasStore";
-import { getAllThunks, deleteThunk } from '../store/archivadasStore/archivadasThunks';
+import { useSelector, useDispatch } from 'react-redux';
 
-// Hook de WebSocket
+import '../styles/Pages.css';
+import Filter from './components/Filter';
+import { SimpleBackdrop } from '../components/Backdrop/BackDrop';
+
+// Importar el hook de WebSocket
 import useWebSocket from './hooks/useWebSocket';
 
 const Main = () => {
   const dispatch = useDispatch();
-  const { tramites, isLoading } = useSelector(state => state.archivadasStore);
+  const { openModalStore } = useSelector(state => state.globalStore);
 
   // Conectar a WebSocket
-  const { isConnected, lastMessage } = useWebSocket('/ws/archivadas/');
+  const { isConnected, lastMessage, sendMessage } = useWebSocket('/ws/archivadas/');
 
   // Estado para notificaciones
   const [notification, setNotification] = React.useState({
@@ -44,11 +33,6 @@ const Main = () => {
     message: '',
     severity: 'info'
   });
-
-  // Cargar datos al montar el componente
-  useEffect(() => {
-    dispatch(getAllThunks());
-  }, [dispatch]);
 
   // Manejar mensajes recibidos del WebSocket
   useEffect(() => {
@@ -66,17 +50,22 @@ const Main = () => {
 
       // Nuevo trámite archivado creado
       else if (lastMessage.type === 'archivada_created') {
+
         dispatch(addTramiteStore(lastMessage.data));
+
         setNotification({
           open: true,
           message: `🆕 Nuevo trámite archivado: ${lastMessage.data.placa}`,
           severity: 'success'
         });
+
       }
 
       // Trámite archivado actualizado
       else if (lastMessage.type === 'archivada_updated') {
+
         dispatch(updateTramiteStore(lastMessage.data));
+
         setNotification({
           open: true,
           message: `✏️ Trámite actualizado: ${lastMessage.data.placa}`,
@@ -89,18 +78,21 @@ const Main = () => {
         dispatch(removeTramiteStore(lastMessage.data.id));
         setNotification({
           open: true,
-          message: `🗑️ Trámite eliminado de archivadas`,
+          message: `🗑️ Trámite eliminado: ${lastMessage.data.placa || 'ID: ' + lastMessage.data.id}`,
           severity: 'warning'
         });
       }
     }
   }, [lastMessage, dispatch]);
 
-  // Handler para eliminar
-  const handleDelete = (id) => {
-    if (window.confirm('¿Estás seguro de eliminar este trámite archivado?')) {
-      dispatch(deleteThunk(id));
-    }
+  // Handlers del Dialog
+  const handleOpenDialog = () => {
+    dispatch(resetFormStore());
+    dispatch(openModalShared());
+  };
+
+  const handleCloseDialog = () => {
+    dispatch(closeModalShared());
   };
 
   // Handler para cerrar notificación
@@ -109,112 +101,43 @@ const Main = () => {
   };
 
   return (
-    <Box sx={{ p: 3 }}>
-      {/* Header */}
-      <Box sx={{ mb: 3, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <ArchiveIcon sx={{ fontSize: 40, color: '#00A859' }} />
-          <Typography variant="h4" sx={{ fontWeight: 600 }}>
-            Trámites Archivados
-          </Typography>
-          <Chip
-            label={isConnected ? 'WebSocket Conectado' : 'WebSocket Desconectado'}
-            color={isConnected ? 'success' : 'error'}
-            size="small"
-          />
-        </Box>
-        <Chip label={`Total: ${tramites.length}`} color="primary" />
+    <Box className="page-container">
+      {/* Indicador de conexión WebSocket */}
+      <Box sx={{ position: 'fixed', top: 70, right: 16, zIndex: 9999 }}>
+        <Chip
+          label={isConnected ? 'Conectado' : 'Desconectado'}
+          color={isConnected ? 'success' : 'error'}
+          size="small"
+          variant="outlined"
+        />
       </Box>
 
-      {/* Tabla de Trámites */}
-      <TableContainer component={Paper} sx={{ boxShadow: 3 }}>
-        <Table>
-          <TableHead>
-            <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
-              <TableCell><strong>ID</strong></TableCell>
-              <TableCell><strong>Placa</strong></TableCell>
-              <TableCell><strong>Tipo Vehículo</strong></TableCell>
-              <TableCell><strong>Departamento</strong></TableCell>
-              <TableCell><strong>Municipio</strong></TableCell>
-              <TableCell><strong>Estado</strong></TableCell>
-              <TableCell><strong>Usuario</strong></TableCell>
-              <TableCell><strong>Fecha Creación</strong></TableCell>
-              <TableCell align="center"><strong>Acciones</strong></TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {isLoading ? (
-              <TableRow>
-                <TableCell colSpan={9} align="center">
-                  Cargando trámites archivados...
-                </TableCell>
-              </TableRow>
-            ) : tramites.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={9} align="center">
-                  <Box sx={{ py: 4 }}>
-                    <ArchiveIcon sx={{ fontSize: 60, color: '#ccc', mb: 2 }} />
-                    <Typography variant="h6" color="textSecondary">
-                      No hay trámites archivados
-                    </Typography>
-                  </Box>
-                </TableCell>
-              </TableRow>
-            ) : (
-              tramites.map((tramite) => (
-                <TableRow key={tramite.id} hover>
-                  <TableCell>{tramite.id}</TableCell>
-                  <TableCell>
-                    <strong>{tramite.placa}</strong>
-                  </TableCell>
-                  <TableCell>{tramite.tipo_vehiculo}</TableCell>
-                  <TableCell>{tramite.nombre_depto || '-'}</TableCell>
-                  <TableCell>{tramite.nombre_muni || '-'}</TableCell>
-                  <TableCell>
-                    <Chip
-                      label={tramite.estado}
-                      size="small"
-                      color={tramite.estado === 'finalizado' ? 'success' : 'default'}
-                    />
-                  </TableCell>
-                  <TableCell>{tramite.usuario || 'Sin asignar'}</TableCell>
-                  <TableCell>
-                    {tramite.created_at ? new Date(tramite.created_at).toLocaleDateString() : '-'}
-                  </TableCell>
-                  <TableCell align="center">
-                    <Tooltip title="Ver Detalles">
-                      <IconButton size="small" color="primary">
-                        <VisibilityIcon />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Eliminar">
-                      <IconButton
-                        size="small"
-                        color="error"
-                        onClick={() => handleDelete(tramite.id)}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </Tooltip>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      {/* Header con título y botón de nuevo trámite */}
+      <MainHeader onAddNew={() => handleOpenDialog()} />
 
-      {/* Notificaciones */}
+      {/* Filtros */}
+      <Filter />
+
+      {/* Tabla de trámites */}
+      <MainTable />
+
+      {/* Dialog de crear/editar */}
+      <MainDialog open={openModalStore} onClose={handleCloseDialog} />
+
+      {/* Backdrop */}
+      <SimpleBackdrop />
+
+      {/* Notificaciones WebSocket */}
       <Snackbar
         open={notification.open}
         autoHideDuration={4000}
         onClose={handleCloseNotification}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
         <Alert
           onClose={handleCloseNotification}
           severity={notification.severity}
-          sx={{ width: '100%' }}
+          variant="filled"
         >
           {notification.message}
         </Alert>
