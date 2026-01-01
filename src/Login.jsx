@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -23,6 +23,7 @@ import {
 } from '@mui/icons-material';
 
 import { getAuth, handleFormStoreThunk } from './store/authStore/authThunks';
+import { isTokenExpired } from './utils/tokenUtils';
 
 import './styles/Login.css';
 import { SimpleBackdrop } from './components/Backdrop/BackDrop';
@@ -33,7 +34,7 @@ const Login = () => {
   const theme    = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  const { username, password } = useSelector(state => state.authStore);
+  const { username, password, token, isLogin } = useSelector(state => state.authStore);
 
   // Estados locales
   const [showPassword, setShowPassword] = useState(false);
@@ -43,8 +44,19 @@ const Login = () => {
     password: '',
   });
 
-  // Estado de loading desde Redux
-  const { isLogin } = useSelector((state) => state.authStore || {});
+  // Verificar si ya hay un token válido al cargar el componente
+  useEffect(() => {
+    // Si el usuario ya está logueado y el token es válido, redirigir al dashboard
+    if (isLogin && token && !isTokenExpired(token)) {
+      console.log('✅ Token válido encontrado. Redirigiendo al dashboard...');
+      navigate('/dashboard', { replace: true });
+    }
+    // Si hay token pero está expirado, limpiar localStorage
+    else if (token && isTokenExpired(token)) {
+      console.log('🔒 Token expirado. Limpiando datos...');
+      localStorage.clear();
+    }
+  }, [isLogin, token, navigate]);
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 // Páginas del Dashboard
@@ -16,15 +16,41 @@ import Finalizados from '../finalizados/Main';
 import FinalizadosHistory from '../finalizados/History';
 
 import Archivadas from '../archivadas/Main';
+import ArchivadaHistory from '../archivadas/History';
 
 import Settings   from '../pages/Settings';
 
+// Importar acción de logout
+import { actionLogout } from '../store/authStore/authThunks';
+
+// Importar utilidades de token
+import { isTokenExpired } from '../utils/tokenUtils';
+
 // Componente de ruta protegida
 const ProtectedRoute = ({ children }) => {
-  // Aquí implementarías tu lógica de autenticación
-  const { isLogin } = useSelector((state) => state.authStore || {});
+  const dispatch = useDispatch();
+  const { isLogin, token } = useSelector((state) => state.authStore || {});
 
+  useEffect(() => {
+    // Verificar si el token ha expirado
+    if (token && isTokenExpired(token)) {
+      console.log('🔒 Token expirado. Cerrando sesión...');
+
+      // Limpiar localStorage completamente
+      localStorage.clear();
+
+      // Hacer logout en Redux
+      dispatch(actionLogout());
+    }
+  }, [token, dispatch]);
+
+  // Si no está logueado, redirigir al login
   if (!isLogin) {
+    return <Navigate to="/" replace />;
+  }
+
+  // Si el token está expirado, redirigir al login
+  if (token && isTokenExpired(token)) {
     return <Navigate to="/" replace />;
   }
 
@@ -121,6 +147,15 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <Archivadas />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/archivadas/history/:id"
+        element={
+          <ProtectedRoute>
+            <ArchivadaHistory />
           </ProtectedRoute>
         }
       />
