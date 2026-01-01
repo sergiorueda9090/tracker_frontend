@@ -57,11 +57,11 @@ const Sidebar = ({ open, onClose, drawerWidth = 280 }) => {
     { text: 'Tracker', icon: <TrackChanges />, path: '/tracker' },
     { text: 'Finalizados', icon: <DoneAll />, path: '/finalizados' },
     { text: 'Archivados', icon: <Archive />, path: '/archivadas' },
-    { text: 'Facturación', icon: <Receipt />, path: '/facturacion' },
+    /*{ text: 'Facturación', icon: <Receipt />, path: '/facturacion' },*/
   ];
 
   const bottomMenuItems = [
-    { text: 'Configuración', icon: <Settings />, path: '/settings' },
+    /*{ text: 'Configuración', icon: <Settings />, path: '/settings' },*/
     { text: 'Cerrar Sesión', icon: <ExitToApp />, path: '/logout' },
   ];
 
