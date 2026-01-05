@@ -1,7 +1,7 @@
 // src/hooks/useWebSocket.js
 import { useEffect, useRef, useState } from 'react';
 
-const url_websocket = 'ws://backendtracker.movilidad2a.com';
+const url_websocket = 'wss://backendtracker.movilidad2a.com';
 
 const useWebSocket = (url) => {
   const [isConnected, setIsConnected] = useState(false);
