@@ -33,8 +33,10 @@ import {
   TrackChanges,
   Archive,
   Description,
-  DoneAll
+  DoneAll,
+  Groups
 } from '@mui/icons-material';
+
 import { useNavigate, useLocation } from 'react-router-dom';
 import './styles/Sidebar.css';
 
@@ -51,6 +53,7 @@ const Sidebar = ({ open, onClose, drawerWidth = 280 }) => {
   const menuItems = [
     { text: 'Dashboard', icon: <Dashboard />, path: '/dashboard' },
     { text: 'Usuarios', icon: <People />, path: '/usuarios' },
+    { text: 'Clientes', icon: <Groups />, path: '/clientes' },
     { text: 'Proveedores', icon: <Business />, path: '/proveedores' },
     
     { text: 'En Preparación', icon: <HourglassEmpty />, path: '/preparacion' },
