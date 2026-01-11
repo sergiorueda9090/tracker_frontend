@@ -15,23 +15,31 @@ import { useDispatch, useSelector } from 'react-redux';
 
 // Thunks
 import { getAllThunks as getAllDepartamentos, showThunk as showMunicipios } from '../../store/departamentosMunicipiosStore/departamentosMunicipiosThunks';
+import { getAllThunks as getAllProveedores } from '../../store/proveedoresStore/proveedoresThunks';
 import {
   handleFormStoreThunk, createThunks, updateThunks,
   addDocumentToList, removeDocumentFromList, toggleDocumentStatus
 } from "../../store/preparacionStore/preparacionThunks";
 import { showAlert } from "../../store/globalStore/globalStore";
 
+// Constantes
+import { Lista_Chequeo_Documentos } from './constants/ListaChequeoDocumentos';
+
 const MainDialog = ({ open, onClose }) => {
   const dispatch = useDispatch();
 
   const {
     id, placa, departamento, municipio, tipo_vehiculo,
-    estado, paquete, lista_documentos
+    estado, paquete, lista_documentos, proveedor_id,
   } = useSelector(state => state.preparacionStore);
 
   const { departamentos, municipios } = useSelector(state => state.departamentosMunicipiosStore);
-
-  const [nuevoDocumento, setNuevoDocumento] = useState('');
+  const { providers } = useSelector(state => state.proveedoresStore);
+  console.log("providers:", providers);
+  console.log("proveedor_id:", proveedor_id);
+  console.log("departamento:", departamento);
+  console.log("municipio:", municipio);
+  const [selectedDocumento, setSelectedDocumento] = useState(null);
   const [archivos, setArchivos] = useState([]);
   const [dragActive, setDragActive] = useState(false);
 
@@ -55,6 +63,10 @@ const MainDialog = ({ open, onClose }) => {
   ];
 
   useEffect(() => {
+    dispatch(getAllProveedores());
+  }, [departamento, municipio]);
+  
+  useEffect(() => {
     dispatch(getAllDepartamentos());
     if (departamento) {
       dispatch(showMunicipios(departamento));
@@ -69,16 +81,44 @@ const MainDialog = ({ open, onClose }) => {
   const handleAutocompleteChange = (name, newValue) => {
     const value = newValue ? newValue.id : '';
     dispatch(handleFormStoreThunk({ name, value }));
+    // Limpiar proveedor_id al cambiar departamento o municipio
+
+    if (name === 'municipio') {
+      dispatch(handleFormStoreThunk({ name: 'municipio',    value }));
+      dispatch(handleFormStoreThunk({ name: 'proveedor_id', value: null }));
+      return;
+    }
 
     if (name === 'departamento') {
       dispatch(handleFormStoreThunk({ name: 'municipio', value: '' }));
+      dispatch(handleFormStoreThunk({ name: 'proveedor_id', value: null }));
+      return;
     }
+
+    if (name === 'proveedor_id') {
+      dispatch(handleFormStoreThunk({ name: 'proveedor_id', value }));
+      return;
+    }
+
   };
 
   const handleAddDocumento = () => {
-    if (nuevoDocumento.trim()) {
-      dispatch(addDocumentToList(nuevoDocumento.trim()));
-      setNuevoDocumento('');
+    if (selectedDocumento) {
+      // Verificar si el documento ya está en la lista
+      const yaExiste = lista_documentos.some(doc => doc.nombre === selectedDocumento.label);
+
+      if (yaExiste) {
+        dispatch(showAlert({
+          type: "warning",
+          title: "Documento Duplicado",
+          text: "Este documento ya está en la lista."
+        }));
+        return;
+      }
+
+      // Agregar el documento con su categoría
+      dispatch(addDocumentToList(selectedDocumento.label, selectedDocumento.categoria));
+      setSelectedDocumento(null);
     }
   };
 
@@ -160,11 +200,11 @@ const MainDialog = ({ open, onClose }) => {
   };
 
   const handleSave = () => {
-    if (!placa || !departamento || !municipio || !tipo_vehiculo) {
+    if (!placa || !departamento || !municipio || !tipo_vehiculo || !proveedor_id) {
       dispatch(showAlert({
         type: "error",
         title: "⚠️ Formulario Incompleto",
-        text: "Los campos Placa, Departamento, Municipio y Tipo de Vehículo son obligatorios."
+        text: "Los campos Placa, Proveedor, Departamento, Municipio y Tipo de Vehículo son obligatorios."
       }));
       return;
     }
@@ -173,6 +213,7 @@ const MainDialog = ({ open, onClose }) => {
     formData.append('placa', placa.toUpperCase());
     formData.append('departamento', departamento);
     formData.append('municipio', municipio);
+    formData.append('proveedor_id', proveedor_id);
     formData.append('tipo_vehiculo', tipo_vehiculo);
     formData.append('estado', estado);
     formData.append('lista_documentos', JSON.stringify(lista_documentos));
@@ -229,6 +270,7 @@ const MainDialog = ({ open, onClose }) => {
               ))}
             </TextField>
           </Box>
+            
 
           {/* Ubicación */}
           <Box>
@@ -277,6 +319,29 @@ const MainDialog = ({ open, onClose }) => {
             </Box>
           </Box>
 
+          {/* Proveedores */}
+          <Box>
+            {/** agregar el contenido de los proveedores dentro del Autocomplete */}
+            <Autocomplete
+              fullWidth
+              options={providers.map(d => ({
+                label: d.nombre + ' - ' + d.codigo_encargado,
+                id: d.id
+              }))}
+              value={
+                providers
+                  .map(d => ({ label: d.nombre + ' - ' + d.codigo_encargado, id: d.id }))
+                  .find(opt => opt.id == proveedor_id) || null
+              }
+              onChange={(event, newValue) => handleAutocompleteChange('proveedor_id', newValue)}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+              renderInput={(params) => (
+                <TextField {...params} label="Proveedor" required />
+              )}
+              noOptionsText="No hay Proveedores"
+            />
+          </Box>
+
           {/* Estado */}
           <Box>
             <TextField
@@ -295,6 +360,7 @@ const MainDialog = ({ open, onClose }) => {
             </TextField>
           </Box>
 
+          
           {/* Carga de Archivos - Área de Drag & Drop */}
           <Box>
             <Typography variant="subtitle2" color="primary" fontWeight={600} mb={1} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -411,31 +477,41 @@ const MainDialog = ({ open, onClose }) => {
             )}
           </Box>
 
-          {/* Lista de Chequeo de Documentos */}
+
+          {/* --- SECCIÓN DE LISTA DE CHEQUEO DE DOCUMENTOS --- */}
           <Box>
             <Typography variant="subtitle2" color="primary" fontWeight={600} mb={1} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Description fontSize="small" /> Lista de Chequeo de Documentos
             </Typography>
 
             <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
-              <TextField
+              <Autocomplete
                 fullWidth
                 size="small"
-                label="Agregar documento"
-                value={nuevoDocumento}
-                onChange={(e) => setNuevoDocumento(e.target.value)}
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter') {
-                    handleAddDocumento();
-                  }
-                }}
-                placeholder="Nombre del documento..."
+                options={Lista_Chequeo_Documentos}
+                getOptionLabel={(option) => option.label}
+                groupBy={(option) => option.categoria}
+                value={selectedDocumento}
+                onChange={(event, newValue) => setSelectedDocumento(newValue)}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Seleccionar documento"
+                    placeholder="Buscar documento..."
+                  />
+                )}
+                noOptionsText="No hay documentos disponibles"
               />
               <Button
                 variant="contained"
                 onClick={handleAddDocumento}
                 startIcon={<Add />}
-                sx={{ minWidth: 120 }}
+                disabled={!selectedDocumento}
+                sx={{
+                  minWidth: 120,
+                  bgcolor: '#00A859',
+                  '&:hover': { bgcolor: '#008e4a' }
+                }}
               >
                 Agregar
               </Button>
@@ -460,6 +536,7 @@ const MainDialog = ({ open, onClose }) => {
                         />
                         <ListItemText
                           primary={doc.nombre}
+                          secondary={doc.categoria}
                           sx={{
                             textDecoration: doc.completado ? 'line-through' : 'none',
                             color: doc.completado ? 'text.secondary' : 'text.primary'
@@ -478,11 +555,10 @@ const MainDialog = ({ open, onClose }) => {
               </Box>
             ) : (
               <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic', textAlign: 'center', py: 2 }}>
-                No hay documentos en la lista. Agregue los documentos requeridos.
+                No hay documentos en la lista. Seleccione los documentos requeridos.
               </Typography>
             )}
           </Box>
-
         </Box>
       </DialogContent>
 

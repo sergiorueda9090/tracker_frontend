@@ -114,6 +114,7 @@ export const showThunk = (id = "") => {
                                   tipo_vehiculo: response.data.tipo_vehiculo,
                                   departamento: response.data.departamento,
                                   municipio: response.data.municipio,
+                                  proveedor_id: response.data.proveedor_id,
                                   estado: response.data.estado,
                                   paquete: response.data.paquete,
                                   lista_documentos: response.data.lista_documentos,
@@ -468,8 +469,8 @@ export const handleClearFilters = () => {
 };
 
 // Gestión de documentos
-export const addDocumentToList = (nombre) => (dispatch) => {
-  dispatch(addDocumentToListAction(nombre));
+export const addDocumentToList = (nombre, categoria) => (dispatch) => {
+  dispatch(addDocumentToListAction({ nombre, categoria }));
 };
 
 export const removeDocumentFromList = (index) => (dispatch) => {

@@ -7,6 +7,7 @@ const initialState = {
   whatsapp: '',
   departamento: '',
   municipio: '',
+  proveedor_id: '',
   transitos_habilitados: [],  // ✅ Cambiado de '' a [] (es JSONField)
   codigo_encargado: '',
   is_active: true,
@@ -65,6 +66,7 @@ export const proveedoresStore = createSlice({
       state.whatsapp = '';
       state.departamento = '';
       state.municipio = '';
+      state.proveedor_id = '';
       state.transitos_habilitados = [];  // ✅ Array vacío
       state.codigo_encargado = '';
       state.is_active = true;
@@ -78,6 +80,7 @@ export const proveedoresStore = createSlice({
       state.whatsapp      = provider.whatsapp || '';
       state.departamento  = provider.departamento || '';
       state.municipio     = provider.municipio || '';
+      state.proveedor_id  = provider.proveedor_id || '';
       state.transitos_habilitados = provider.transitos_habilitados || [];  // ✅ Array vacío por defecto
       state.codigo_encargado      = provider.codigo_encargado || '';
       state.is_active             = provider.is_active ?? true;

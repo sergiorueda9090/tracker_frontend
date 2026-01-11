@@ -246,6 +246,7 @@ const MainTable = () => {
               <TableCell><strong>ID</strong></TableCell>
               <TableCell><strong>Placa</strong></TableCell>
               <TableCell><strong>Tipo de Vehículo</strong></TableCell>
+              <TableCell><strong>Gestor</strong></TableCell>
               <TableCell><strong>Ubicación</strong></TableCell>
               <TableCell align="center"><strong>Estado</strong></TableCell>
               <TableCell align="center"><strong>Documentos</strong></TableCell>
@@ -280,9 +281,17 @@ const MainTable = () => {
 
                 <TableCell>
                   <Typography variant="body2" color="text.secondary">
-                    {tramite.nombre_depto} - {tramite.nombre_muni}
+                    {tramite.nombre_proveedor}
                   </Typography>
                 </TableCell>
+                
+                <TableCell>
+                  <Typography variant="body2" color="text.secondary">
+                    {tramite.nombre_muni} - {tramite.nombre_depto}
+                  </Typography>
+                </TableCell>
+
+                
 
                 <TableCell align="center">
                   {getEstadoChip(tramite.estado)}

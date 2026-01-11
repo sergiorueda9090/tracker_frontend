@@ -6,6 +6,7 @@ const initialState = {
   placa: '',
   departamento: '',
   municipio: '',
+  proveedor_id: null,
   tipo_vehiculo: '',
   estado: 'en_verificacion', // en_verificacion, para_radicacion, en_novedad, enviado_tracker
   paquete: '', // URL o nombre del archivo/carpeta
@@ -71,6 +72,7 @@ export const preparacionStore = createSlice({
       state.placa = '';
       state.departamento = '';
       state.municipio = '';
+      state.proveedor_id = '';
       state.tipo_vehiculo = '';
       state.estado = 'en_verificacion';
       state.paquete = '';
@@ -86,6 +88,7 @@ export const preparacionStore = createSlice({
       state.id = tramite.id;
       state.placa = tramite.placa || '';
       state.departamento = tramite.departamento || '';
+      state.proveedor_id = tramite.proveedor_id || '';
       state.municipio = tramite.municipio || '';
       state.tipo_vehiculo = tramite.tipo_vehiculo || '';
       state.estado = tramite.estado || 'en_verificacion';
@@ -131,8 +134,13 @@ export const preparacionStore = createSlice({
 
     // Agregar documento a la lista de chequeo
     addDocumentToList: (state, action) => {
+      const { nombre, categoria } = typeof action.payload === 'string'
+        ? { nombre: action.payload, categoria: undefined }
+        : action.payload;
+
       state.lista_documentos.push({
-        nombre: action.payload,
+        nombre: nombre,
+        categoria: categoria,
         completado: false
       });
     },
