@@ -10,6 +10,7 @@ import { trackerStore } from './trackerStore/trackerStore';
 import { finalizadosStore } from './finalizadosStore/finalizadosStore';
 import { archivadasStore } from './archivadasStore/archivadasStore';
 import { clienteStore } from './clienteStore/clienteStore';
+import { tramitesStore } from './tramitesStore/tramitesStore';
 
 export const store = configureStore({
   reducer: {
@@ -24,5 +25,6 @@ export const store = configureStore({
     finalizadosStore: finalizadosStore.reducer,
     archivadasStore: archivadasStore.reducer,
     clienteStore: clienteStore.reducer,
+    tramitesStore: tramitesStore.reducer,
   }
 })

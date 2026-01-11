@@ -54,8 +54,8 @@ const Sidebar = ({ open, onClose, drawerWidth = 280 }) => {
     { text: 'Dashboard', icon: <Dashboard />, path: '/dashboard' },
     { text: 'Usuarios', icon: <People />, path: '/usuarios' },
     { text: 'Clientes', icon: <Groups />, path: '/clientes' },
+    { text: 'Tramites', icon: <Description />, path: '/tramites' },
     { text: 'Proveedores', icon: <Business />, path: '/proveedores' },
-    
     { text: 'En Preparación', icon: <HourglassEmpty />, path: '/preparacion' },
     { text: 'Tracker', icon: <TrackChanges />, path: '/tracker' },
     { text: 'Finalizados', icon: <DoneAll />, path: '/finalizados' },

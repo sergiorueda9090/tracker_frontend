@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Dashboard  from '../pages/Dashboard';
 import Usuarios   from '../usuarios/Main';
 import Clientes   from '../clientes/Main';
+import Tramites    from '../tramites/Main';
 import Proveedores from '../proveedores/Main';
 
 import Preparacion from '../preparacion/Main';
@@ -85,6 +86,15 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <Clientes />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/tramites"
+        element={
+          <ProtectedRoute>
+            <Tramites />
           </ProtectedRoute>
         }
       />
