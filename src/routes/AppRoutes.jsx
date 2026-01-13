@@ -7,6 +7,7 @@ import Usuarios   from '../usuarios/Main';
 import Clientes   from '../clientes/Main';
 import Tramites    from '../tramites/Main';
 import TransitosTarifas from '../transitostarifas/Main';
+import Liquidaciones from '../liquidacion/Main';
 import Proveedores from '../proveedores/Main';
 
 import Preparacion from '../preparacion/Main';
@@ -100,6 +101,7 @@ const AppRoutes = () => {
         }
       />
 
+
       <Route
         path="/transitosTarifas"
         element={
@@ -190,6 +192,14 @@ const AppRoutes = () => {
         }
       />
 
+      <Route
+        path="/liquidaciones"
+        element={
+          <ProtectedRoute>
+            <Liquidaciones />
+          </ProtectedRoute>
+        }
+      />
       {/* Clientes
       <Route
         path="/customers"

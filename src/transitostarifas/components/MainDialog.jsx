@@ -10,6 +10,7 @@ import {
   Typography,
   InputAdornment,
   MenuItem,
+  Autocomplete,
 } from '@mui/material';
 import { Assignment, AccountCircle, AttachMoney, SwapHoriz } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
@@ -159,33 +160,43 @@ const MainDialog = ({ open, onClose }) => {
                 </MenuItem>
                 {Array.isArray(tramites) && tramites.filter(t => t.is_active).map((tramite) => (
                   <MenuItem key={tramite.id} value={tramite.id}>
-                    {tramite.nombre}
+                    {tramite.nombre} - {tramite.precio.toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}
                   </MenuItem>
                 ))}
               </TextField>
 
-              <TextField
+              <Autocomplete
                 fullWidth
-                select
-                label="Proveedor / Gestor"
-                name="proveedor_id"
-                value={proveedor_id || ''}
-                onChange={handleChangeForm}
-                required
-                InputProps={{
-                  startAdornment: <InputAdornment position="start"><AccountCircle /></InputAdornment>,
+                options={Array.isArray(providers) ? providers.filter(p => p.is_active) : []}
+                value={providers.find(p => p.id === proveedor_id) || null}
+                onChange={(event, newValue) => {
+                  dispatch(handleFormStoreThunk({
+                    name: 'proveedor_id',
+                    value: newValue ? newValue.id : ''
+                  }));
                 }}
-                helperText="Seleccione el proveedor o gestor"
-              >
-                <MenuItem value="">
-                  <em>Seleccione un proveedor</em>
-                </MenuItem>
-                {Array.isArray(providers) && providers.filter(p => p.is_active).map((provider) => (
-                  <MenuItem key={provider.id} value={provider.id}>
-                    {provider.codigo_encargado} - {provider.nombre}
-                  </MenuItem>
-                ))}
-              </TextField>
+                getOptionLabel={(option) => `${option.codigo_encargado} - ${option.nombre}`}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Gestor"
+                    required
+                    helperText="Seleccione el proveedor o gestor"
+                    InputProps={{
+                      ...params.InputProps,
+                      startAdornment: (
+                        <>
+                          <InputAdornment position="start">
+                            <AccountCircle />
+                          </InputAdornment>
+                          {params.InputProps.startAdornment}
+                        </>
+                      ),
+                    }}
+                  />
+                )}
+              />
             </Box>
           </Box>
 
