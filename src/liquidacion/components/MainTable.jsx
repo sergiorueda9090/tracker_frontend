@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Paper,
   Table,
@@ -11,7 +11,6 @@ import {
   Tooltip,
   Box,
   Typography,
-  Alert,
   Chip,
 } from '@mui/material';
 import {
@@ -19,84 +18,33 @@ import {
   CheckCircle,
 } from '@mui/icons-material';
 
-import { useSelector, useDispatch } from 'react-redux';
-import { getAllThunks } from "../../store/finalizadosStore/finalizadosThunks";
+import { useDispatch } from 'react-redux';
 import { openModalShared, closeModalShared } from "../../store/globalStore/globalStore";
 import Pagination from './Pagination';
 import MainDialog from './MainDialog';
 
+// Importar datos mock
+import { mockTramites, formatCurrency, formatDate } from '../data/mockData';
+
 const MainTable = () => {
   const dispatch = useDispatch();
-  const { finalizados, error } = useSelector(state => state.finalizadosStore);
   const [selectedTramite, setSelectedTramite] = useState(null);
-
-  useEffect(() => {
-    dispatch(getAllThunks());
-  }, [dispatch]);
+  const [openDialog, setOpenDialog] = useState(false);
 
   const handleViewLiquidacion = (tramite) => {
-    // Preparar datos para el dialog
-    const tramiteData = {
-      id: tramite.id,
-      placa: tramite.placa,
-      tramite_nombre: tramite.tramite_nombre || tramite.tipo_tramite,
-      precio: tramite.precio || tramite.tramite_precio || 0,
-      servicio_empresa: tramite.servicio_empresa || 0,
-      servicio_proveedor: tramite.servicio_proveedor || 0,
-      proveedor_nombre: tramite.proveedor_nombre || tramite.proveedor__nombre,
-      municipio_nombre: tramite.municipio_nombre || tramite.municipio__nombre,
-      transporte: tramite.transporte || 0,
-      bonificacion: tramite.bonificacion || 0,
-      anticipos: tramite.anticipos || 0,
-    };
-
-    setSelectedTramite(tramiteData);
+    setSelectedTramite(tramite);
+    setOpenDialog(true);
     dispatch(openModalShared());
   };
 
-  // Formatear precio en pesos colombianos
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('es-CO', {
-      style: 'currency',
-      currency: 'COP',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 2
-    }).format(price || 0);
+  const handleCloseDialog = () => {
+    setSelectedTramite(null);
+    setOpenDialog(false);
+    dispatch(closeModalShared());
   };
 
-  // Formatear fecha
-  const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('es-CO', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-  };
-
-  // Mostrar error
-  if (error) {
-    return (
-      <Paper className="page-paper">
-        <Alert severity="error">{error}</Alert>
-      </Paper>
-    );
-  }
-
-  // Validar si finalizados es un array
-  if (!Array.isArray(finalizados)) {
-    return (
-      <Paper className="page-paper">
-        <Alert severity="warning">
-          Los datos de trámites finalizados no tienen el formato correcto.
-        </Alert>
-      </Paper>
-    );
-  }
-
-  // Validar si hay finalizados
-  if (finalizados.length === 0) {
+  // Validar si hay trámites
+  if (!mockTramites || mockTramites.length === 0) {
     return (
       <Paper className="page-paper">
         <Box display="flex" justifyContent="center" alignItems="center" minHeight={400}>
@@ -128,42 +76,53 @@ const MainTable = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {finalizados.map((tramite) => (
-                <TableRow key={tramite.id} className="table-row">
+              {mockTramites.map((tramite) => (
+                <TableRow
+                  key={tramite.id}
+                  className="table-row"
+                  sx={{
+                    '&:hover': {
+                      backgroundColor: 'rgba(0, 168, 89, 0.05)',
+                    },
+                  }}
+                >
                   <TableCell>{tramite.id}</TableCell>
                   <TableCell>
                     <Typography variant="body2" fontWeight={600}>
-                      {tramite.placa || 'N/A'}
+                      {tramite.placa}
                     </Typography>
                   </TableCell>
                   <TableCell>
                     <Typography variant="body2">
-                      {tramite.tramite_nombre || tramite.tipo_tramite || 'N/A'}
+                      {tramite.tramite_nombre}
                     </Typography>
                   </TableCell>
                   <TableCell>
                     <Typography variant="body2">
-                      {tramite.proveedor_nombre || tramite.proveedor__nombre || 'N/A'}
+                      {tramite.proveedor_nombre}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {tramite.proveedor_codigo}
                     </Typography>
                   </TableCell>
                   <TableCell>
                     <Typography variant="body2" color="text.secondary">
-                      {tramite.municipio_nombre || tramite.municipio__nombre || 'N/A'}
+                      {tramite.municipio_nombre}
                     </Typography>
                   </TableCell>
                   <TableCell align="right">
                     <Typography variant="body2" fontWeight={600} color="primary">
-                      {formatPrice(tramite.precio || tramite.tramite_precio)}
+                      {formatCurrency(tramite.tramite_precio)}
                     </Typography>
                   </TableCell>
                   <TableCell align="right">
                     <Typography variant="body2" fontWeight={600}>
-                      {formatPrice(tramite.servicio_empresa)}
+                      {formatCurrency(tramite.servicio_empresa)}
                     </Typography>
                   </TableCell>
                   <TableCell align="center">
                     <Typography variant="body2" color="text.secondary">
-                      {formatDate(tramite.fecha_finalizado || tramite.updated_at)}
+                      {formatDate(tramite.fecha_finalizado)}
                     </Typography>
                   </TableCell>
                   <TableCell align="center">
@@ -198,11 +157,8 @@ const MainTable = () => {
       {/* Dialog de liquidación */}
       {selectedTramite && (
         <MainDialog
-         
-          onClose={() => {
-            setSelectedTramite(null);
-            dispatch(closeModalShared());
-          }}
+          open={openDialog}
+          onClose={handleCloseDialog}
           tramiteData={selectedTramite}
         />
       )}

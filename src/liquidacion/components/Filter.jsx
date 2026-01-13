@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Paper,
   Grid,
@@ -16,27 +16,37 @@ import {
   CalendarToday,
   DirectionsCar,
 } from '@mui/icons-material';
-import { useSelector, useDispatch } from 'react-redux';
-import { filterFieldThunk, applyFilters, handleClearFilters } from '../../store/finalizadosStore/finalizadosThunks';
 import '../../styles/Filter.css';
 
 const Filter = () => {
-  const dispatch = useDispatch();
-  const { filters } = useSelector(state => state.finalizadosStore);
+  const [filters, setFilters] = useState({
+    search: '',
+    startDate: '',
+    endDate: '',
+  });
 
   // Contar filtros activos
   const activeFiltersCount = Object.values(filters).filter(value => value !== '').length;
 
   const handleChange = (field, value) => {
-    dispatch(filterFieldThunk({ field, value }));
+    setFilters(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
   const handleApplyFilters = () => {
-    dispatch(applyFilters(filters));
+    console.log('Aplicando filtros:', filters);
+    // TODO: Implementar lógica de filtrado cuando se conecte al backend
+    // Por ahora solo mostramos en consola
   };
 
   const handleClear = () => {
-    dispatch(handleClearFilters());
+    setFilters({
+      search: '',
+      startDate: '',
+      endDate: '',
+    });
   };
 
   const handleKeyPress = (e) => {
