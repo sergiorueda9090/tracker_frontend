@@ -22,7 +22,6 @@ const MainDialog = ({ open, onClose }) => {
     id,
     nombre,
     descripcion,
-    precio
   } = useSelector(state => state.tramitesStore);
 
   const handleChangeForm = (e) => {
@@ -41,30 +40,13 @@ const MainDialog = ({ open, onClose }) => {
       return;
     }
 
-    if (!precio || parseFloat(precio) <= 0) {
-      dispatch(showAlert({
-        type: "error",
-        title: "⚠️ Campo Requerido",
-        text: "El precio del trámite debe ser mayor a cero.",
-      }));
-      return;
-    }
 
-    // Validar que el precio sea un número válido
-    if (isNaN(parseFloat(precio))) {
-      dispatch(showAlert({
-        type: "error",
-        title: "⚠️ Valor Inválido",
-        text: "El precio debe ser un número válido.",
-      }));
-      return;
-    }
+
 
     // Preparar datos
     const data = {
       nombre,
       descripcion: descripcion || '',
-      precio: parseFloat(precio)
     };
 
     // Llamar al thunk correspondiente
@@ -122,23 +104,6 @@ const MainDialog = ({ open, onClose }) => {
                 helperText="Descripción detallada del trámite (opcional)"
               />
 
-              <TextField
-                fullWidth
-                label="Precio"
-                name="precio"
-                type="number"
-                value={precio || ''}
-                onChange={handleChangeForm}
-                required
-                InputProps={{
-                  startAdornment: <InputAdornment position="start"><AttachMoney /></InputAdornment>,
-                }}
-                helperText="Precio del trámite en pesos colombianos"
-                inputProps={{
-                  min: 0,
-                  step: "0.01"
-                }}
-              />
             </Box>
           </Box>
 

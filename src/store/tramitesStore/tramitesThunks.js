@@ -104,7 +104,6 @@ export const showThunk = (id = "") => {
                     id          : response.data.id ?? null,
                     nombre      : response.data.nombre ?? '',
                     descripcion : response.data.descripcion ?? '',
-                    precio      : response.data.precio ?? '',
                     is_active   : response.data.is_active ?? true,
                 }));
 

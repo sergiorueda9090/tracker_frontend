@@ -49,7 +49,6 @@ const MainTable = () => {
         const data = {
           nombre: tramite.nombre,
           descripcion: tramite.descripcion,
-          precio: tramite.precio,
           is_active: newActiveState ? 1 : 0
         };
         dispatch(updateThunks(tramite.id, data));
@@ -74,15 +73,6 @@ const MainTable = () => {
     }));
   };
 
-  // Formatear precio en pesos colombianos
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('es-CO', {
-      style: 'currency',
-      currency: 'COP',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 2
-    }).format(price);
-  };
 
   // Mostrar error
   if (error) {
@@ -126,7 +116,6 @@ const MainTable = () => {
               <TableCell><strong>ID</strong></TableCell>
               <TableCell><strong>Nombre</strong></TableCell>
               <TableCell><strong>Descripción</strong></TableCell>
-              <TableCell align="right"><strong>Precio</strong></TableCell>
               <TableCell align="center"><strong>Estado</strong></TableCell>
               <TableCell align="center"><strong>Acciones</strong></TableCell>
             </TableRow>
@@ -152,11 +141,6 @@ const MainTable = () => {
                     }}
                   >
                     {tramite.descripcion || 'Sin descripción'}
-                  </Typography>
-                </TableCell>
-                <TableCell align="right">
-                  <Typography variant="body2" fontWeight={600} color="primary">
-                    {formatPrice(tramite.precio)}
                   </Typography>
                 </TableCell>
                 <TableCell align="center">

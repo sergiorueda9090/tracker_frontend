@@ -7,7 +7,6 @@ export const tramitesStore = createSlice({
     id: null,
     nombre: '',
     descripcion: '',
-    precio: '',
     is_active: true,
     tramites: [],
     paginado_info: {
@@ -40,7 +39,6 @@ export const tramitesStore = createSlice({
       state.id = null;
       state.nombre = '';
       state.descripcion = '';
-      state.precio = '';
       state.is_active = true;
     },
     // Cargar trámite para edición
@@ -49,7 +47,6 @@ export const tramitesStore = createSlice({
       state.id = tramite.id;
       state.nombre = tramite.nombre || '';
       state.descripcion = tramite.descripcion || '';
-      state.precio = tramite.precio || '';
       state.is_active = tramite.is_active;
     },
     setPaginationPage: (state, action) => {
