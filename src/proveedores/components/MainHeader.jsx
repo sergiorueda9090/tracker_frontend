@@ -11,7 +11,7 @@ const MainHeader = ({ onAddNew }) => {
     <Box className="page-header-actions">
       <Box>
         <Typography variant="h4" className="page-title">
-          Proveedores
+          Gestores
         </Typography>
       </Box>
       <Button
@@ -20,7 +20,7 @@ const MainHeader = ({ onAddNew }) => {
         className="action-button"
         onClick={onAddNew}
       >
-        Nuevo Proveedor
+        Nuevo Gestor
       </Button>
     </Box>
   );

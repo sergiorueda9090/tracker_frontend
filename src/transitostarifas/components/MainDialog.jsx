@@ -182,7 +182,7 @@ const MainDialog = ({ open, onClose }) => {
                     {...params}
                     label="Gestor"
                     required
-                    helperText="Seleccione el proveedor o gestor"
+                    helperText="Seleccione el gestor"
                     InputProps={{
                       ...params.InputProps,
                       startAdornment: (
@@ -209,7 +209,7 @@ const MainDialog = ({ open, onClose }) => {
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               <TextField
                 fullWidth
-                label="Servicio Proveedor"
+                label="Servicio Gestor"
                 name="servicio_proveedor"
                 type="number"
                 value={servicio_proveedor || ''}
@@ -218,7 +218,7 @@ const MainDialog = ({ open, onClose }) => {
                 InputProps={{
                   startAdornment: <InputAdornment position="start"><AttachMoney /></InputAdornment>,
                 }}
-                helperText="Precio que cobra el proveedor"
+                helperText="Precio que cobra el Gestor"
                 inputProps={{
                   min: 0,
                   step: "0.01"

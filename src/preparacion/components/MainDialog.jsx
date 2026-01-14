@@ -336,9 +336,9 @@ const MainDialog = ({ open, onClose }) => {
               onChange={(event, newValue) => handleAutocompleteChange('proveedor_id', newValue)}
               isOptionEqualToValue={(option, value) => option.id === value.id}
               renderInput={(params) => (
-                <TextField {...params} label="Proveedor" required />
+                <TextField {...params} label="Gestor                                                                                                                                                                                                                                                                                                                                                                                             " required />
               )}
-              noOptionsText="No hay Proveedores"
+              noOptionsText="No hay Gestores disponibles"
             />
           </Box>
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Paper,
   Grid,
@@ -15,32 +15,40 @@ import {
   FilterList,
   Clear,
   CalendarToday,
-  Business, // Cambiado por contexto de proveedores
-  LocationCity, // Para departamentos/municipios
+  Receipt,
 } from '@mui/icons-material';
-import { useSelector, useDispatch } from 'react-redux';
-// Ajustado a proveedoresStore
-import { filterFieldThunk, applyFilters, handleClearFilters } from '../../store/proveedoresStore/proveedoresThunks';
 import '../../styles/Filter.css';
 
 const Filter = () => {
-  const dispatch = useDispatch();
-  // Ajustado a proveedoresStore
-  const { filters } = useSelector(state => state.proveedoresStore);
-  
+  const [filters, setFilters] = useState({
+    search: '',
+    estado: '',
+    startDate: '',
+    endDate: '',
+  });
+
   // Contar filtros activos
   const activeFiltersCount = Object.values(filters).filter(value => value !== '').length;
 
   const handleChange = (field, value) => {
-    dispatch(filterFieldThunk({ field, value }));
+    setFilters(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
   const handleApplyFilters = () => {
-    dispatch(applyFilters(filters));
+    console.log('Aplicando filtros:', filters);
+    // TODO: Implementar lógica de filtrado cuando se conecte al backend
   };
 
   const handleClear = () => {
-    dispatch(handleClearFilters());
+    setFilters({
+      search: '',
+      estado: '',
+      startDate: '',
+      endDate: '',
+    });
   };
 
   const handleKeyPress = (e) => {
@@ -54,12 +62,12 @@ const Filter = () => {
       <Box className="filter-header">
         <Box display="flex" alignItems="center" gap={1}>
           <FilterList color="inherit" />
-          <span className="filter-title">Filtros de Gestores</span>
+          <span className="filter-title">Filtros de Búsqueda</span>
           {activeFiltersCount > 0 && (
-            <Chip 
+            <Chip
               label={`${activeFiltersCount} filtro${activeFiltersCount > 1 ? 's' : ''}`}
               size="small"
-              sx={{ 
+              sx={{
                 backgroundColor: 'rgba(255, 255, 255, 0.2)',
                 color: 'white',
                 fontWeight: 600,
@@ -76,15 +84,15 @@ const Filter = () => {
             <TextField
               fullWidth
               size="small"
-              label="Buscar Gestor"
-              placeholder="Buscar por nombre, código de encargado, WhatsApp..."
+              label="Buscar Factura"
+              placeholder="Buscar por ID, cliente, placa..."
               value={filters.search}
               onChange={(e) => handleChange('search', e.target.value)}
               onKeyPress={handleKeyPress}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Business sx={{ color: 'primary.main', fontSize: 24 }} />
+                    <Receipt sx={{ color: 'primary.main', fontSize: 28 }} />
                   </InputAdornment>
                 ),
                 endAdornment: filters.search && (
@@ -101,9 +109,9 @@ const Filter = () => {
               }}
               sx={{
                 '& .MuiOutlinedInput-root': {
-                  backgroundColor: 'rgba(0, 168, 89, 0.04)', // Color verde basado en tu diseño
+                  backgroundColor: 'rgba(102, 126, 234, 0.04)',
                   '&:hover': {
-                    backgroundColor: 'rgba(0, 168, 89, 0.08)',
+                    backgroundColor: 'rgba(102, 126, 234, 0.08)',
                   },
                   '&.Mui-focused': {
                     backgroundColor: 'white',
@@ -113,16 +121,46 @@ const Filter = () => {
             />
           </Grid>
 
+          {/* Filtros Secundarios */}
+          <Grid item xs={12}>
+            <Box className="secondary-filters-label">
+              <FilterList fontSize="small" sx={{ mr: 0.5 }} />
+              Filtros Adicionales
+            </Box>
+          </Grid>
+
+          {/* Filtro por estado */}
+          <Grid item xs={12} sm={6} md={4}>
+            <TextField
+              fullWidth
+              select
+              size="small"
+              label="Estado"
+              value={filters.estado}
+              onChange={(e) => handleChange('estado', e.target.value)}
+            >
+              <MenuItem value="">
+                <em>Todos los estados</em>
+              </MenuItem>
+              <MenuItem value="pendiente">Pendiente</MenuItem>
+              <MenuItem value="enviada">Enviada a Siigo</MenuItem>
+              <MenuItem value="pagada">Pagada</MenuItem>
+              <MenuItem value="anulada">Anulada</MenuItem>
+            </TextField>
+          </Grid>
+
           {/* Fecha inicio */}
-          <Grid item xs={12} sm={6} md={6} lg={4}>
+          <Grid item xs={12} sm={6} md={4}>
             <TextField
               fullWidth
               size="small"
               type="date"
-              label="Registrado Desde"
+              label="Fecha Desde"
               value={filters.startDate}
               onChange={(e) => handleChange('startDate', e.target.value)}
-              InputLabelProps={{ shrink: true }}
+              InputLabelProps={{
+                shrink: true,
+              }}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -134,15 +172,17 @@ const Filter = () => {
           </Grid>
 
           {/* Fecha fin */}
-          <Grid item xs={12} sm={6} md={6} lg={4}>
+          <Grid item xs={12} sm={6} md={4}>
             <TextField
               fullWidth
               size="small"
               type="date"
-              label="Registrado Hasta"
+              label="Fecha Hasta"
               value={filters.endDate}
               onChange={(e) => handleChange('endDate', e.target.value)}
-              InputLabelProps={{ shrink: true }}
+              InputLabelProps={{
+                shrink: true,
+              }}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -170,10 +210,11 @@ const Filter = () => {
               >
                 Limpiar Filtros
               </Button>
-              
+
               <Button
                 size="small"
                 variant="contained"
+                color="primary"
                 onClick={handleApplyFilters}
                 startIcon={<Search />}
                 sx={{
@@ -184,7 +225,7 @@ const Filter = () => {
                   }
                 }}
               >
-                Filtrar Gestores
+                Buscar
               </Button>
             </Box>
           </Grid>

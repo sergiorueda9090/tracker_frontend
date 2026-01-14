@@ -81,7 +81,7 @@ const MainDialog = ({ open, onClose }) => {
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle sx={{ color: '#00A859', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
-        <BadgeIcon /> {id ? 'Editar Proveedor' : 'Registrar Nuevo Proveedor'}
+        <BadgeIcon /> {id ? 'Editar Gestor' : 'Registrar Nuevo Gestor'}
       </DialogTitle>
       
       <DialogContent dividers>
@@ -217,7 +217,7 @@ const MainDialog = ({ open, onClose }) => {
           onClick={handleSave}
           sx={{ bgcolor: '#00A859', '&:hover': { bgcolor: '#008e4a' }, px: 4 }}
         >
-          {id ? 'Guardar Cambios' : 'Registrar Proveedor'}
+          {id ? 'Guardar Cambios' : 'Registrar Gestor'}
         </Button>
       </DialogActions>
     </Dialog>

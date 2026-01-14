@@ -54,13 +54,14 @@ const Sidebar = ({ open, onClose, drawerWidth = 280 }) => {
     { text: 'Dashboard', icon: <Dashboard />, path: '/dashboard' },
     { text: 'Usuarios', icon: <People />, path: '/usuarios' },
     { text: 'Clientes', icon: <Groups />, path: '/clientes' },
-    { text: 'Proveedores', icon: <Business />, path: '/proveedores' },
+    { text: 'Gestores', icon: <Business />, path: '/proveedores' },
     { text: 'Tramites', icon: <Description />, path: '/tramites' },
     { text: 'Tránsitos y Tarifas', icon: <LocalOffer />, path: '/transitosTarifas' },
     { text: 'En Preparación', icon: <HourglassEmpty />, path: '/preparacion' },
     { text: 'Tracker', icon: <TrackChanges />, path: '/tracker' },
     { text: 'Finalizados', icon: <DoneAll />, path: '/finalizados' },
-     { text: 'Liquidaciones', icon: <Assessment />, path: '/liquidaciones' },
+    { text: 'Liquidaciones', icon: <Assessment />, path: '/liquidaciones' },
+    { text: 'Facturacion', icon: <Receipt />, path: '/facturacion' },
     { text: 'Archivados', icon: <Archive />, path: '/archivadas' },
     /*{ text: 'Facturación', icon: <Receipt />, path: '/facturacion' },*/
   ];

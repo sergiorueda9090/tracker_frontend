@@ -21,7 +21,7 @@ import FinalizadosHistory from '../finalizados/History';
 
 import Archivadas from '../archivadas/Main';
 import ArchivadaHistory from '../archivadas/History';
-
+import Facturacion from '../facturacion/Main';
 import Settings   from '../pages/Settings';
 
 // Importar acción de logout
@@ -210,6 +210,14 @@ const AppRoutes = () => {
         }
       />*/}
 
+      <Route
+        path="/facturacion"
+        element={
+          <ProtectedRoute>
+            <Facturacion />
+          </ProtectedRoute>
+        }
+      />
 
       {/* Configuración */}
       <Route

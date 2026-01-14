@@ -59,7 +59,7 @@ const MainTable = () => {
           <TableHead>
             <TableRow>
               <TableCell><strong>Código</strong></TableCell>
-              <TableCell><strong>Proveedor / Tramitador</strong></TableCell>
+              <TableCell><strong>Gestor / Tramitador</strong></TableCell>
               <TableCell><strong>Ubicación</strong></TableCell>
               <TableCell><strong>WhatsApp</strong></TableCell>
               <TableCell><strong>Tránsitos</strong></TableCell>
