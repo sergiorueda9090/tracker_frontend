@@ -7,6 +7,7 @@ const initialState = {
   departamento: '',
   municipio: '',
   proveedor_id: null,
+  cliente_id: null,
   tipo_vehiculo: '',
   estado: 'en_verificacion', // en_verificacion, para_radicacion, en_novedad, enviado_tracker
   paquete: '', // URL o nombre del archivo/carpeta
@@ -73,6 +74,7 @@ export const preparacionStore = createSlice({
       state.departamento = '';
       state.municipio = '';
       state.proveedor_id = '';
+      state.cliente_id = null;
       state.tipo_vehiculo = '';
       state.estado = 'en_verificacion';
       state.paquete = '';
@@ -89,6 +91,7 @@ export const preparacionStore = createSlice({
       state.placa = tramite.placa || '';
       state.departamento = tramite.departamento || '';
       state.proveedor_id = tramite.proveedor_id || '';
+      state.cliente_id = tramite.cliente_id || null;
       state.municipio = tramite.municipio || '';
       state.tipo_vehiculo = tramite.tipo_vehiculo || '';
       state.estado = tramite.estado || 'en_verificacion';

@@ -5,10 +5,9 @@ export const transitosTarifasStore = createSlice({
   initialState: {
     // Formulario de tránsito tarifa (CRUD)
     id: null,
-    tramite_id: '',
-    proveedor_id: '',
-    servicio_proveedor: '',
-    servicio_empresa: '',
+    departamento: '',
+    municipio: '',
+    tramites_data: [], // Array de trámites con sus gestores
     is_active: true,
     transito_tarifas: [],
     paginado_info: {
@@ -23,6 +22,8 @@ export const transitosTarifasStore = createSlice({
       search: '',
       tramite: '',
       proveedor: '',
+      departamento: '',
+      municipio: '',
       status: '',
       startDate: '',
       endDate: '',
@@ -41,20 +42,18 @@ export const transitosTarifasStore = createSlice({
     // Resetear formulario de tránsito tarifa
     resetFormStore: (state) => {
       state.id = null;
-      state.tramite_id = '';
-      state.proveedor_id = '';
-      state.servicio_proveedor = '';
-      state.servicio_empresa = '';
+      state.departamento = '';
+      state.municipio = '';
+      state.tramites_data = [];
       state.is_active = true;
     },
     // Cargar tránsito tarifa para edición
     loadForEditStore: (state, action) => {
       const transitoTarifa = action.payload;
       state.id = transitoTarifa.id;
-      state.tramite_id = transitoTarifa.tramite_id || '';
-      state.proveedor_id = transitoTarifa.proveedor_id || '';
-      state.servicio_proveedor = transitoTarifa.servicio_proveedor || '';
-      state.servicio_empresa = transitoTarifa.servicio_empresa || '';
+      state.departamento = transitoTarifa.departamento_id || '';
+      state.municipio = transitoTarifa.municipio_id || '';
+      state.tramites_data = transitoTarifa.tramites_data || [];
       state.is_active = transitoTarifa.is_active;
     },
     setPaginationPage: (state, action) => {

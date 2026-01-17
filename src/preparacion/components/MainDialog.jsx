@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, use } from 'react';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions,
   TextField, Button, Box, Typography, InputAdornment,
@@ -16,6 +16,8 @@ import { useDispatch, useSelector } from 'react-redux';
 // Thunks
 import { getAllThunks as getAllDepartamentos, showThunk as showMunicipios } from '../../store/departamentosMunicipiosStore/departamentosMunicipiosThunks';
 import { getAllThunks as getAllProveedores } from '../../store/proveedoresStore/proveedoresThunks';
+import { getAllThunks as getAllClientes } from '../../store/clienteStore/clienteThunks';
+
 import {
   handleFormStoreThunk, createThunks, updateThunks,
   addDocumentToList, removeDocumentFromList, toggleDocumentStatus
@@ -31,14 +33,13 @@ const MainDialog = ({ open, onClose }) => {
   const {
     id, placa, departamento, municipio, tipo_vehiculo,
     estado, paquete, lista_documentos, proveedor_id,
+    cliente_id
   } = useSelector(state => state.preparacionStore);
 
   const { departamentos, municipios } = useSelector(state => state.departamentosMunicipiosStore);
   const { providers } = useSelector(state => state.proveedoresStore);
-  console.log("providers:", providers);
-  console.log("proveedor_id:", proveedor_id);
-  console.log("departamento:", departamento);
-  console.log("municipio:", municipio);
+  const { clientes } = useSelector(state => state.clienteStore);
+  console.log("Clientes disponibles:", clientes);
   const [selectedDocumento, setSelectedDocumento] = useState(null);
   const [archivos, setArchivos] = useState([]);
   const [dragActive, setDragActive] = useState(false);
@@ -73,6 +74,10 @@ const MainDialog = ({ open, onClose }) => {
     }
   }, [departamento, dispatch]);
 
+  useEffect(() => {
+    dispatch(getAllClientes());
+  }, [dispatch]);
+
   const handleChangeForm = (e) => {
     const { name, value } = e.target;
     dispatch(handleFormStoreThunk({ name, value }));
@@ -92,6 +97,11 @@ const MainDialog = ({ open, onClose }) => {
     if (name === 'departamento') {
       dispatch(handleFormStoreThunk({ name: 'municipio', value: '' }));
       dispatch(handleFormStoreThunk({ name: 'proveedor_id', value: null }));
+      return;
+    }
+
+    if (name === 'cliente_id') {
+      dispatch(handleFormStoreThunk({ name: 'cliente_id', value }));
       return;
     }
 
@@ -200,11 +210,11 @@ const MainDialog = ({ open, onClose }) => {
   };
 
   const handleSave = () => {
-    if (!placa || !departamento || !municipio || !tipo_vehiculo || !proveedor_id) {
+    if (!placa || !departamento || !municipio || !tipo_vehiculo || !proveedor_id || !cliente_id) {
       dispatch(showAlert({
         type: "error",
         title: "⚠️ Formulario Incompleto",
-        text: "Los campos Placa, Proveedor, Departamento, Municipio y Tipo de Vehículo son obligatorios."
+        text: "Los campos Placa, Proveedor, Cliente, Departamento, Municipio y Tipo de Vehículo son obligatorios."
       }));
       return;
     }
@@ -214,6 +224,7 @@ const MainDialog = ({ open, onClose }) => {
     formData.append('departamento', departamento);
     formData.append('municipio', municipio);
     formData.append('proveedor_id', proveedor_id);
+    formData.append('cliente_id', cliente_id);
     formData.append('tipo_vehiculo', tipo_vehiculo);
     formData.append('estado', estado);
     formData.append('lista_documentos', JSON.stringify(lista_documentos));
@@ -318,10 +329,28 @@ const MainDialog = ({ open, onClose }) => {
               />
             </Box>
           </Box>
+              
+          {/* Clientes */}
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <Autocomplete
+              fullWidth
+              options={clientes.map(c => ({
+                label: c.nombre + ' - ' + c.nit,
+                id: c.id
+              }))}
+              value={
+                clientes
+                  .map(c => ({ label: c.nombre + ' - ' + c.nit, id: c.id }))
+                  .find(opt => opt.id == cliente_id) || null
+              }
+              onChange={(event, newValue) => handleAutocompleteChange('cliente_id', newValue)}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+              renderInput={(params) => (
+                <TextField {...params} label="Cliente *" />
+              )}
+              noOptionsText="No hay Clientes disponibles"
+            />
 
-          {/* Proveedores */}
-          <Box>
-            {/** agregar el contenido de los proveedores dentro del Autocomplete */}
             <Autocomplete
               fullWidth
               options={providers.map(d => ({
@@ -341,6 +370,7 @@ const MainDialog = ({ open, onClose }) => {
               noOptionsText="No hay Gestores disponibles"
             />
           </Box>
+         
 
           {/* Estado */}
           <Box>

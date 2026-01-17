@@ -20,6 +20,8 @@ export const getAllThunks = ({
   search = "",
   tramite = "",
   proveedor = "",
+  departamento = "",
+  municipio = "",
   status = "",
   start_date = "",
   end_date = "",
@@ -41,6 +43,8 @@ export const getAllThunks = ({
     if (search) params.append("search", search);
     if (tramite) params.append("tramite", tramite);
     if (proveedor) params.append("proveedor", proveedor);
+    if (departamento) params.append("departamento", departamento);
+    if (municipio) params.append("municipio", municipio);
     if (status) params.append("status", status);
     if (start_date) params.append("start_date", start_date);
     if (end_date) params.append("end_date", end_date);
@@ -104,12 +108,25 @@ export const showThunk = (id = "") => {
 
             if(response.status === 200){
 
+                // Transformar datos del backend al formato del frontend
+                const tramites_data = response.data.tramites.map(tramite => ({
+                    tramite_id: tramite.tramite_id,
+                    nombre_tramite: tramite.tramite_nombre || '',
+                    derechos_2026: tramite.derechos_2026 || '',
+                    gestores: tramite.gestores.map(gestor => ({
+                        proveedor_id: gestor.proveedor_id,
+                        nombre: gestor.proveedor_nombre || '',
+                        codigo: gestor.proveedor_codigo || '',
+                        servicio_gestor: gestor.servicio_gestor || '',
+                        servicio_empresa: gestor.servicio_empresa || '',
+                    })),
+                }));
+
                 await dispatch(loadForEditStore({
                     id                  : response.data.id ?? null,
-                    tramite_id          : response.data.tramite_id ?? '',
-                    proveedor_id        : response.data.proveedor_id ?? '',
-                    servicio_proveedor  : response.data.servicio_proveedor ?? '',
-                    servicio_empresa    : response.data.servicio_empresa ?? '',
+                    departamento_id     : response.data.departamento_id ?? '',
+                    municipio_id        : response.data.municipio_id ?? '',
+                    tramites_data       : tramites_data,
                     is_active           : response.data.is_active ?? true,
                 }));
 
@@ -378,6 +395,8 @@ export const handlePageChange = (newPage) => {
       search: filters.search,
       tramite: filters.tramite,
       proveedor: filters.proveedor,
+      departamento: filters.departamento,
+      municipio: filters.municipio,
       status: filters.status,
       start_date: filters.startDate,
       end_date: filters.endDate,
@@ -398,6 +417,8 @@ export const handlePageSizeChange = (newPageSize) => {
       search: filters.search,
       tramite: filters.tramite,
       proveedor: filters.proveedor,
+      departamento: filters.departamento,
+      municipio: filters.municipio,
       status: filters.status,
       start_date: filters.startDate,
       end_date: filters.endDate,
@@ -425,6 +446,8 @@ export const applyFilters = (filterData) => {
       search: filterData.search,
       tramite: filterData.tramite,
       proveedor: filterData.proveedor,
+      departamento: filterData.departamento,
+      municipio: filterData.municipio,
       status: filterData.status,
       start_date: filterData.startDate,
       end_date: filterData.endDate,

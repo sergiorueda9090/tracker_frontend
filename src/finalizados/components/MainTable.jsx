@@ -125,7 +125,8 @@ const MainTable = ({ onArchivar }) => {
               <TableCell align="center"><strong>Estado</strong></TableCell>
               <TableCell align="center"><strong>Fecha Recepción</strong></TableCell>
               <TableCell align="center"><strong>Hace</strong></TableCell>
-              <TableCell><strong>Proveedor</strong></TableCell>
+              <TableCell><strong>Gestor</strong></TableCell>
+              <TableCell><strong>Cliente</strong></TableCell>
               <TableCell><strong>Código Encargado</strong></TableCell>
               <TableCell><strong>Usuario</strong></TableCell>
               <TableCell align="center"><strong>Acciones</strong></TableCell>
@@ -182,6 +183,12 @@ const MainTable = ({ onArchivar }) => {
                   <TableCell>
                     <Typography variant="body2">
                       {tramite.proveedor_nombre || 'Sin asignar'}
+                    </Typography>
+                  </TableCell>
+
+                  <TableCell>
+                    <Typography variant="body2">
+                      {tramite.nombre_cliente || 'Sin asignar'}
                     </Typography>
                   </TableCell>
 

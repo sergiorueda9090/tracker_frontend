@@ -17,14 +17,14 @@ import {
 import {
   Edit,
   Delete,
-  Lock,
-  LockOpen,
-  TrendingUp,
+  LocationOn,
+  Assignment,
+  Visibility,
 } from '@mui/icons-material';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { getAllThunks, showThunk, deleteThunk, updateThunks } from "../../store/transitosTarifasStore/transitosTarifasThunks";
-import { showAlert } from "../../store/globalStore/globalStore";
+import { getAllThunks, showThunk, deleteThunk } from "../../store/transitosTarifasStore/transitosTarifasThunks";
+import { openModalShared, showAlert } from "../../store/globalStore/globalStore";
 import Pagination from './Pagination';
 
 const MainTable = () => {
@@ -35,30 +35,6 @@ const MainTable = () => {
     dispatch(getAllThunks());
   }, [dispatch]);
 
-  const handleToggleActive = (tarifa) => {
-    const newActiveState = !tarifa.is_active;
-
-    dispatch(showAlert({
-      type: "warning",
-      title: tarifa.is_active ? "⚠️ Desactivar Tarifa" : "✅ Activar Tarifa",
-      text: tarifa.is_active
-        ? `¿Está seguro que desea desactivar esta tarifa? La tarifa no estará disponible hasta que sea activada nuevamente.`
-        : `¿Está seguro que desea activar esta tarifa? La tarifa estará disponible inmediatamente.`,
-      confirmText: tarifa.is_active ? "Sí, desactivar tarifa" : "Sí, activar tarifa",
-      cancelText: "Cancelar",
-      action: () => {
-        const data = {
-          tramite_id: tarifa.tramite_id,
-          proveedor_id: tarifa.proveedor_id,
-          servicio_proveedor: tarifa.servicio_proveedor,
-          servicio_empresa: tarifa.servicio_empresa,
-          is_active: newActiveState ? 1 : 0
-        };
-        dispatch(updateThunks(tarifa.id, data));
-      }
-    }));
-  };
-
   const handleShowRecord = (id = null) => {
     dispatch(showThunk(id));
   };
@@ -67,8 +43,8 @@ const MainTable = () => {
     dispatch(showAlert({
       type: "warning",
       title: "⚠️ Confirmación de Eliminación",
-      text: `¿Está seguro que desea eliminar esta tarifa? Esta acción es permanente y no se podrá deshacer.`,
-      confirmText: "Sí, eliminar tarifa",
+      text: `¿Está seguro que desea eliminar la configuración de "${tarifa.departamento_nombre} - ${tarifa.municipio_nombre}"? Esta acción eliminará todos los trámites y gestores asociados y no se podrá deshacer.`,
+      confirmText: "Sí, eliminar configuración",
       cancelText: "Cancelar",
       action: () => {
         dispatch(deleteThunk(tarifa.id));
@@ -76,29 +52,20 @@ const MainTable = () => {
     }));
   };
 
-  // Formatear precio en pesos colombianos
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('es-CO', {
-      style: 'currency',
-      currency: 'COP',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 2
-    }).format(price);
+  const handleCreate = () => {
+    dispatch(openModalShared());
   };
 
-  // Calcular margen
-  const calcularMargen = (servicio_proveedor, servicio_empresa) => {
-    return parseFloat(servicio_empresa) - parseFloat(servicio_proveedor);
-  };
-
-  // Calcular porcentaje de margen
-  const calcularPorcentajeMargen = (servicio_proveedor, servicio_empresa) => {
-    const prov = parseFloat(servicio_proveedor);
-    const margen = calcularMargen(servicio_proveedor, servicio_empresa);
-    if (prov > 0) {
-      return ((margen / prov) * 100).toFixed(2);
-    }
-    return 0;
+  // Formatear fecha
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-CO', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
   };
 
   // Mostrar error
@@ -125,9 +92,13 @@ const MainTable = () => {
   if (transito_tarifas.length === 0) {
     return (
       <Paper className="page-paper">
-        <Box display="flex" justifyContent="center" alignItems="center" minHeight={400}>
+        <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" minHeight={400} gap={2}>
+          <LocationOn sx={{ fontSize: 64, color: 'text.secondary', opacity: 0.5 }} />
           <Typography variant="h6" color="text.secondary">
-            No hay tránsitos tarifas registrados
+            No hay configuraciones de tarifas registradas
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Agregue una nueva configuración por departamento y municipio
           </Typography>
         </Box>
       </Paper>
@@ -139,87 +110,134 @@ const MainTable = () => {
       <TableContainer>
         <Table>
           <TableHead>
-            <TableRow>
-              <TableCell><strong>ID</strong></TableCell>
-              <TableCell><strong>Trámite</strong></TableCell>
-              <TableCell><strong>Proveedor</strong></TableCell>
-              <TableCell align="right"><strong>Servicio Proveedor</strong></TableCell>
-              <TableCell align="right"><strong>Servicio Empresa</strong></TableCell>
-              <TableCell align="right"><strong>Margen</strong></TableCell>
-              <TableCell align="center"><strong>Estado</strong></TableCell>
-              <TableCell align="center"><strong>Acciones</strong></TableCell>
+            <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
+              <TableCell sx={{ fontWeight: 700, color: '#00A859' }}>ID</TableCell>
+              <TableCell sx={{ fontWeight: 700, color: '#00A859' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  <LocationOn fontSize="small" />
+                  Ubicación
+                </Box>
+              </TableCell>
+              <TableCell sx={{ fontWeight: 700, color: '#00A859' }}>Departamento</TableCell>
+              <TableCell sx={{ fontWeight: 700, color: '#00A859' }}>Municipio</TableCell>
+              <TableCell align="center" sx={{ fontWeight: 700, color: '#00A859' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5 }}>
+                  <Assignment fontSize="small" />
+                  Trámites
+                </Box>
+              </TableCell>
+              <TableCell align="center" sx={{ fontWeight: 700, color: '#00A859' }}>Estado</TableCell>
+              <TableCell sx={{ fontWeight: 700, color: '#00A859' }}>Fecha Creación</TableCell>
+              <TableCell align="center" sx={{ fontWeight: 700, color: '#00A859' }}>Acciones</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {transito_tarifas.map((tarifa) => (
-              <TableRow key={tarifa.id} className="table-row">
-                <TableCell>{tarifa.id}</TableCell>
+              <TableRow
+                key={tarifa.id}
+                className="table-row"
+                sx={{
+                  '&:hover': {
+                    backgroundColor: '#f8fef9',
+                  }
+                }}
+              >
                 <TableCell>
-                  <Typography variant="body2" fontWeight={600}>
-                    {tarifa.tramite__nombre}
+                  <Typography variant="body2" fontWeight={600} color="text.secondary">
+                    #{tarifa.id}
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <LocationOn sx={{ color: '#00A859', fontSize: 20 }} />
+                    <Box>
+                      <Typography variant="body2" fontWeight={600}>
+                        {tarifa.departamento_nombre}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {tarifa.municipio_nombre}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="body2">
+                    {tarifa.departamento_nombre}
                   </Typography>
                 </TableCell>
                 <TableCell>
                   <Typography variant="body2">
-                    <strong>{tarifa.proveedor__codigo_encargado}</strong>
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {tarifa.proveedor__nombre}
+                    {tarifa.municipio_nombre}
                   </Typography>
                 </TableCell>
-                <TableCell align="right">
-                  <Typography variant="body2" color="text.secondary">
-                    {formatPrice(tarifa.servicio_proveedor)}
-                  </Typography>
-                </TableCell>
-                <TableCell align="right">
-                  <Typography variant="body2" fontWeight={600} color="primary">
-                    {formatPrice(tarifa.servicio_empresa)}
-                  </Typography>
-                </TableCell>
-                <TableCell align="right">
-                  <Box display="flex" flexDirection="column" alignItems="flex-end">
-                    <Typography variant="body2" fontWeight={600} color="success.main">
-                      {formatPrice(calcularMargen(tarifa.servicio_proveedor, tarifa.servicio_empresa))}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <TrendingUp fontSize="inherit" />
-                      {calcularPorcentajeMargen(tarifa.servicio_proveedor, tarifa.servicio_empresa)}%
-                    </Typography>
-                  </Box>
+                <TableCell align="center">
+                  <Chip
+                    label={`${tarifa.total_tramites || 0} ${tarifa.total_tramites === 1 ? 'Trámite' : 'Trámites'}`}
+                    size="small"
+                    sx={{
+                      backgroundColor: '#e8f5e9',
+                      color: '#2e7d32',
+                      fontWeight: 600,
+                      borderRadius: '16px',
+                    }}
+                    icon={<Assignment sx={{ fontSize: 16 }} />}
+                  />
                 </TableCell>
                 <TableCell align="center">
                   <Chip
                     label={tarifa.is_active ? 'Activo' : 'Inactivo'}
                     size="small"
                     color={tarifa.is_active ? 'success' : 'default'}
-                    icon={tarifa.is_active ? <LockOpen /> : <Lock />}
+                    sx={{
+                      fontWeight: 600,
+                      borderRadius: '16px',
+                    }}
                   />
                 </TableCell>
+                <TableCell>
+                  <Typography variant="caption" color="text.secondary">
+                    {formatDate(tarifa.created_at)}
+                  </Typography>
+                </TableCell>
                 <TableCell align="center">
-                  <Box className="action-buttons">
-                    <Tooltip title="Editar">
+                  <Box className="action-buttons" sx={{ display: 'flex', gap: 0.5, justifyContent: 'center' }}>
+                    <Tooltip title="Ver/Editar Configuración">
                       <IconButton
                         size="small"
-                        color="primary"
+                        sx={{
+                          color: '#00A859',
+                          '&:hover': {
+                            backgroundColor: 'rgba(0, 168, 89, 0.08)',
+                          }
+                        }}
                         onClick={() => handleShowRecord(tarifa.id)}
                       >
                         <Edit fontSize="small" />
                       </IconButton>
                     </Tooltip>
-                    <Tooltip title={tarifa.is_active ? 'Desactivar' : 'Activar'}>
+                    <Tooltip title="Ver Detalles">
                       <IconButton
                         size="small"
-                        color={tarifa.is_active ? 'warning' : 'success'}
-                        onClick={() => handleToggleActive(tarifa)}
+                        sx={{
+                          color: '#1976d2',
+                          '&:hover': {
+                            backgroundColor: 'rgba(25, 118, 210, 0.08)',
+                          }
+                        }}
+                        onClick={() => handleShowRecord(tarifa.id)}
                       >
-                        {tarifa.is_active ? <Lock fontSize="small" /> : <LockOpen fontSize="small" />}
+                        <Visibility fontSize="small" />
                       </IconButton>
                     </Tooltip>
-                    <Tooltip title="Eliminar">
+                    <Tooltip title="Eliminar Configuración">
                       <IconButton
                         size="small"
-                        color="error"
+                        sx={{
+                          color: '#d32f2f',
+                          '&:hover': {
+                            backgroundColor: 'rgba(211, 47, 47, 0.08)',
+                          }
+                        }}
                         onClick={() => handleDelete(tarifa)}
                       >
                         <Delete fontSize="small" />

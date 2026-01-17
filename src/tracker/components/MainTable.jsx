@@ -314,7 +314,8 @@ const MainTable = () => {
               <TableCell align="center"><strong>Estado Tracker</strong></TableCell>
               <TableCell align="center"><strong>Fecha Recepción</strong></TableCell>
               <TableCell align="center"><strong>Hace</strong></TableCell>
-              <TableCell><strong>Proveedor</strong></TableCell>
+              <TableCell><strong>Gestor</strong></TableCell>
+              <TableCell><strong>Cliente</strong></TableCell>
               <TableCell><strong>Código Encargado</strong></TableCell>
               <TableCell><strong>Usuario</strong></TableCell>
               <TableCell><strong>Archivos</strong></TableCell>
@@ -378,6 +379,13 @@ const MainTable = () => {
                       {tramite.proveedor_nombre || 'Sin asignar'}
                     </Typography>
                   </TableCell>
+
+                  <TableCell>
+                    <Typography variant="body2">
+                      {tramite.nombre_cliente || 'Sin asignar'}
+                    </Typography>
+                  </TableCell>
+                  
 
                   <TableCell>
                     <Typography variant="body2" fontWeight={600} color="secondary">

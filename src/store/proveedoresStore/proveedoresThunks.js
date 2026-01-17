@@ -31,9 +31,10 @@ export const getAllThunks = ({
 
     await dispatch(showBackDropStore());
 
-    const { authStore, preparacionStore } = getState();
+    const { authStore, preparacionStore, transitosTarifasStore } = getState();
     const token = authStore.token;
     const { departamento, municipio } = preparacionStore;
+    const { departamento: departamentoTT, municipio: municipioTT } = transitosTarifasStore;
 
     // Construir los parámetros dinámicamente
     let params = new URLSearchParams();
@@ -48,6 +49,8 @@ export const getAllThunks = ({
     if (end_date) params.append("end_date", end_date);
     if (departamento) params.append("departamento", departamento);
     if (municipio) params.append("municipio", municipio);
+    if (departamentoTT) params.append("departamento", departamentoTT);
+    if (municipioTT) params.append("municipio", municipioTT);
     
     const options = {
       method: "GET",
