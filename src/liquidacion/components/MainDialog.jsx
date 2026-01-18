@@ -12,36 +12,78 @@ import {
   CardContent,
   Grid,
   Chip,
+  TextField,
 } from '@mui/material';
 import {
   Receipt,
   AccountCircle,
   TrendingUp,
+  TrendingDown,
   Close,
   Print,
   LocationOn,
   DirectionsCar,
+  Save,
 } from '@mui/icons-material';
+import { useDispatch, useSelector } from 'react-redux';
+import { handleFormStoreThunk, updateThunks } from '../../store/liquidacionStore/liquidacionThunks';
+import { showAlert } from "../../store/globalStore/globalStore";
 
-// Importar funciones de cálculo
-import {
-  calcularIVA,
-  calcularTotalFacturacion,
-  calcularTotalServicioGestor,
-  calcularUtilidad,
-  formatCurrency,
-  formatDate,
-} from '../data/mockData';
+// Formatear moneda
+const formatCurrency = (value) => {
+  const num = parseFloat(value) || 0;
+  return new Intl.NumberFormat('es-CO', {
+    style: 'currency',
+    currency: 'COP',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(num);
+};
 
-const MainDialog = ({ open, onClose, tramiteData }) => {
-  if (!tramiteData) return null;
+// Formatear fecha
+const formatDate = (dateString) => {
+  if (!dateString) return 'N/A';
+  return new Date(dateString).toLocaleDateString('es-CO', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  });
+};
 
-  // Cálculos
-  const iva = calcularIVA(tramiteData.servicio_empresa);
-  const totalFacturacion = calcularTotalFacturacion(tramiteData);
-  const totalFacturacionSinIVA = tramiteData.tramite_precio + tramiteData.servicio_empresa;
-  const totalServicioGestor = calcularTotalServicioGestor(tramiteData);
-  const utilidad = calcularUtilidad(tramiteData);
+const MainDialog = ({ open, onClose }) => {
+  const dispatch = useDispatch();
+
+  const {
+    id,
+    placa,
+    tipo_vehiculo,
+    tramite_nombre,
+    proveedor_nombre,
+    proveedor_codigo,
+    cliente_nombre,
+    departamento_nombre,
+    municipio_nombre,
+    derechos_tramite,
+    servicio_empresa,
+    iva_servicio,
+    total_facturacion,
+    total_facturacion_sin_iva,
+    servicio_gestor,
+    transporte,
+    bonificacion,
+    anticipos,
+    total_servicio_gestor,
+    utilidad,
+    es_rentable,
+    estado,
+    observaciones,
+    fecha_finalizado,
+  } = useSelector(state => state.liquidacionStore);
+
+  if (!id) return null;
+
+  // Parsear valores numéricos
+  const parseNum = (val) => parseFloat(val) || 0;
 
   // Estilo para las filas de conceptos
   const conceptoRowStyle = {
@@ -69,6 +111,26 @@ const MainDialog = ({ open, onClose, tramiteData }) => {
     border: '2px solid rgba(0, 168, 89, 0.3)',
   };
 
+  const handleChangeForm = (e) => {
+    const { name, value } = e.target;
+    dispatch(handleFormStoreThunk({ name, value }));
+  };
+
+  const handleSave = () => {
+    const dataToSend = {
+      derechos_tramite: derechos_tramite,
+      servicio_empresa: servicio_empresa,
+      servicio_gestor: servicio_gestor,
+      transporte: transporte,
+      bonificacion: bonificacion,
+      anticipos: anticipos,
+      estado: estado,
+      observaciones: observaciones,
+    };
+
+    dispatch(updateThunks(id, dataToSend));
+  };
+
   return (
     <Dialog open={open} onClose={onClose} maxWidth="lg" fullWidth>
       <DialogTitle
@@ -82,7 +144,7 @@ const MainDialog = ({ open, onClose, tramiteData }) => {
         }}
       >
         <Receipt />
-        Liquidación - Trámite Finalizado
+        Liquidación - Trámite #{id}
       </DialogTitle>
 
       <DialogContent dividers sx={{ backgroundColor: '#F8FAFC' }}>
@@ -96,14 +158,17 @@ const MainDialog = ({ open, onClose, tramiteData }) => {
                   Placa:
                 </Typography>
                 <Typography variant="h6" fontWeight={700} color="primary">
-                  {tramiteData.placa}
+                  {placa}
                 </Typography>
               </Box>
               <Typography variant="body2" color="text.secondary">
-                Trámite: <strong>{tramiteData.tramite_nombre}</strong>
+                Trámite: <strong>{tramite_nombre || 'N/A'}</strong>
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                Fecha finalizado: <strong>{formatDate(tramiteData.fecha_finalizado)}</strong>
+                Tipo: <strong>{tipo_vehiculo || 'N/A'}</strong>
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Fecha finalizado: <strong>{formatDate(fecha_finalizado)}</strong>
               </Typography>
             </Grid>
             <Grid item xs={12} md={6}>
@@ -113,20 +178,26 @@ const MainDialog = ({ open, onClose, tramiteData }) => {
                   Gestor:
                 </Typography>
                 <Typography variant="body1" fontWeight={600}>
-                  {tramiteData.proveedor_nombre}
+                  {proveedor_nombre || 'Sin asignar'}
                 </Typography>
               </Box>
+              <Typography variant="body2" color="text.secondary">
+                Código: <strong>{proveedor_codigo || 'N/A'}</strong>
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Cliente: <strong>{cliente_nombre || 'N/A'}</strong>
+              </Typography>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <LocationOn color="action" fontSize="small" />
                 <Typography variant="body2" color="text.secondary">
-                  {tramiteData.municipio_nombre}, {tramiteData.departamento_nombre}
+                  {municipio_nombre || 'N/A'}, {departamento_nombre || 'N/A'}
                 </Typography>
               </Box>
               <Chip
-                label="Finalizado"
-                color="success"
+                label={estado || 'pendiente'}
+                color={estado === 'liquidado' || estado === 'pagado' ? 'success' : 'warning'}
                 size="small"
-                sx={{ mt: 1 }}
+                sx={{ mt: 1, textTransform: 'capitalize' }}
               />
             </Grid>
           </Grid>
@@ -134,7 +205,7 @@ const MainDialog = ({ open, onClose, tramiteData }) => {
 
         {/* Grid de dos columnas */}
         <Grid container spacing={3}>
-          {/* 1️⃣ Card: Facturación */}
+          {/* 1 Card: Facturación */}
           <Grid item xs={12} md={6}>
             <Card
               sx={{
@@ -153,13 +224,13 @@ const MainDialog = ({ open, onClose, tramiteData }) => {
 
                 <Divider sx={{ mb: 2 }} />
 
-                {/* Precio del trámite */}
+                {/* Derechos del trámite */}
                 <Box sx={conceptoRowStyle}>
                   <Typography variant="body1" color="text.secondary">
-                    (+) {tramiteData.tramite_nombre}
+                    (+) Derechos de Trámite
                   </Typography>
                   <Typography variant="body1" fontWeight={600} color="primary">
-                    {formatCurrency(tramiteData.tramite_precio)}
+                    {formatCurrency(derechos_tramite)}
                   </Typography>
                 </Box>
 
@@ -169,7 +240,7 @@ const MainDialog = ({ open, onClose, tramiteData }) => {
                     (+) Servicio Empresa
                   </Typography>
                   <Typography variant="body1" fontWeight={600} color="primary">
-                    {formatCurrency(tramiteData.servicio_empresa)}
+                    {formatCurrency(servicio_empresa)}
                   </Typography>
                 </Box>
 
@@ -179,7 +250,7 @@ const MainDialog = ({ open, onClose, tramiteData }) => {
                     (+) IVA Servicio Empresa (19%)
                   </Typography>
                   <Typography variant="body1" fontWeight={600} color="warning.main">
-                    {formatCurrency(iva)}
+                    {formatCurrency(iva_servicio)}
                   </Typography>
                 </Box>
 
@@ -191,21 +262,21 @@ const MainDialog = ({ open, onClose, tramiteData }) => {
                     Total Facturación
                   </Typography>
                   <Typography variant="h6" fontWeight={700} color="primary">
-                    {formatCurrency(totalFacturacion)}
+                    {formatCurrency(total_facturacion)}
                   </Typography>
                 </Box>
 
                 {/* Subtotal sin IVA */}
                 <Box sx={{ mt: 2, p: 1.5, backgroundColor: 'rgba(245, 158, 11, 0.1)', borderRadius: 1 }}>
                   <Typography variant="caption" color="text.secondary">
-                    Subtotal sin IVA: <strong>{formatCurrency(totalFacturacionSinIVA)}</strong>
+                    Subtotal sin IVA: <strong>{formatCurrency(total_facturacion_sin_iva)}</strong>
                   </Typography>
                 </Box>
               </CardContent>
             </Card>
           </Grid>
 
-          {/* 2️⃣ Card: Servicio Gestor */}
+          {/* 2 Card: Servicio Gestor */}
           <Grid item xs={12} md={6}>
             <Card
               sx={{
@@ -227,13 +298,13 @@ const MainDialog = ({ open, onClose, tramiteData }) => {
                 {/* Información del gestor */}
                 <Box sx={{ mb: 3, p: 2, backgroundColor: 'rgba(0, 168, 89, 0.05)', borderRadius: 1 }}>
                   <Typography variant="body2" color="text.secondary">
-                    Gestor: <strong>{tramiteData.proveedor_nombre}</strong>
+                    Gestor: <strong>{proveedor_nombre || 'Sin asignar'}</strong>
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    Código: <strong>{tramiteData.proveedor_codigo}</strong>
+                    Código: <strong>{proveedor_codigo || 'N/A'}</strong>
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    Municipio: <strong>{tramiteData.municipio_nombre}</strong>
+                    Municipio: <strong>{municipio_nombre || 'N/A'}</strong>
                   </Typography>
                 </Box>
 
@@ -243,7 +314,7 @@ const MainDialog = ({ open, onClose, tramiteData }) => {
                     (+) Servicio Gestor
                   </Typography>
                   <Typography variant="body1" fontWeight={600} color="primary">
-                    {formatCurrency(tramiteData.servicio_proveedor)}
+                    {formatCurrency(servicio_gestor)}
                   </Typography>
                 </Box>
 
@@ -252,7 +323,7 @@ const MainDialog = ({ open, onClose, tramiteData }) => {
                     (+) Transporte / Envíos
                   </Typography>
                   <Typography variant="body1" fontWeight={600} color="primary">
-                    {formatCurrency(tramiteData.transporte)}
+                    {formatCurrency(transporte)}
                   </Typography>
                 </Box>
 
@@ -261,7 +332,7 @@ const MainDialog = ({ open, onClose, tramiteData }) => {
                     (+) Bonificación
                   </Typography>
                   <Typography variant="body1" fontWeight={600} color="primary">
-                    {formatCurrency(tramiteData.bonificacion)}
+                    {formatCurrency(bonificacion)}
                   </Typography>
                 </Box>
 
@@ -273,7 +344,7 @@ const MainDialog = ({ open, onClose, tramiteData }) => {
                     (-) Anticipos
                   </Typography>
                   <Typography variant="body1" fontWeight={600} color="error">
-                    {formatCurrency(tramiteData.anticipos)}
+                    {formatCurrency(anticipos)}
                   </Typography>
                 </Box>
 
@@ -285,7 +356,7 @@ const MainDialog = ({ open, onClose, tramiteData }) => {
                     Total Servicio Gestor
                   </Typography>
                   <Typography variant="h6" fontWeight={700} color="primary">
-                    {formatCurrency(totalServicioGestor)}
+                    {formatCurrency(total_servicio_gestor)}
                   </Typography>
                 </Box>
               </CardContent>
@@ -293,20 +364,24 @@ const MainDialog = ({ open, onClose, tramiteData }) => {
           </Grid>
         </Grid>
 
-        {/* 📊 Cálculo de Utilidad */}
+        {/* Cálculo de Utilidad */}
         <Box
           sx={{
             mt: 3,
             p: 3,
-            backgroundColor: utilidad >= 0 ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)',
-            border: utilidad >= 0 ? '3px solid rgba(34, 197, 94, 0.4)' : '3px solid rgba(239, 68, 68, 0.4)',
+            backgroundColor: es_rentable ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+            border: es_rentable ? '3px solid rgba(34, 197, 94, 0.4)' : '3px solid rgba(239, 68, 68, 0.4)',
             borderRadius: 2,
             boxShadow: 2,
           }}
         >
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2, mb: 2 }}>
-            <TrendingUp color={utilidad >= 0 ? 'success' : 'error'} fontSize="large" />
-            <Typography variant="h5" fontWeight={700} color={utilidad >= 0 ? 'success.main' : 'error.main'}>
+            {es_rentable ? (
+              <TrendingUp color="success" fontSize="large" />
+            ) : (
+              <TrendingDown color="error" fontSize="large" />
+            )}
+            <Typography variant="h5" fontWeight={700} color={es_rentable ? 'success.main' : 'error.main'}>
               UTILIDAD
             </Typography>
           </Box>
@@ -321,7 +396,7 @@ const MainDialog = ({ open, onClose, tramiteData }) => {
                 Facturación sin IVA
               </Typography>
               <Typography variant="h6" fontWeight={600}>
-                {formatCurrency(totalFacturacionSinIVA)}
+                {formatCurrency(total_facturacion_sin_iva)}
               </Typography>
             </Box>
 
@@ -332,7 +407,7 @@ const MainDialog = ({ open, onClose, tramiteData }) => {
                 Servicio Gestor
               </Typography>
               <Typography variant="h6" fontWeight={600}>
-                {formatCurrency(totalServicioGestor)}
+                {formatCurrency(total_servicio_gestor)}
               </Typography>
             </Box>
 
@@ -354,12 +429,26 @@ const MainDialog = ({ open, onClose, tramiteData }) => {
               <Typography
                 variant="h4"
                 fontWeight={900}
-                color={utilidad >= 0 ? 'success.main' : 'error.main'}
+                color={es_rentable ? 'success.main' : 'error.main'}
               >
                 {formatCurrency(utilidad)}
               </Typography>
             </Box>
           </Box>
+        </Box>
+
+        {/* Observaciones */}
+        <Box sx={{ mt: 3 }}>
+          <TextField
+            fullWidth
+            multiline
+            rows={3}
+            label="Observaciones"
+            name="observaciones"
+            value={observaciones || ''}
+            onChange={handleChangeForm}
+            placeholder="Notas adicionales sobre esta liquidación..."
+          />
         </Box>
       </DialogContent>
 
@@ -374,8 +463,16 @@ const MainDialog = ({ open, onClose, tramiteData }) => {
         </Button>
         <Button
           startIcon={<Close />}
-          variant="contained"
+          variant="outlined"
+          color="inherit"
           onClick={onClose}
+        >
+          Cerrar
+        </Button>
+        <Button
+          startIcon={<Save />}
+          variant="contained"
+          onClick={handleSave}
           sx={{
             background: 'linear-gradient(135deg, #00A859 0%, #008A47 100%)',
             '&:hover': {
@@ -383,7 +480,7 @@ const MainDialog = ({ open, onClose, tramiteData }) => {
             },
           }}
         >
-          Cerrar
+          Guardar Cambios
         </Button>
       </DialogActions>
     </Dialog>

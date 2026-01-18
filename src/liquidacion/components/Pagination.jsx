@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Box,
   IconButton,
@@ -13,45 +13,42 @@ import {
   NavigateBefore,
   NavigateNext,
 } from '@mui/icons-material';
+import { useDispatch, useSelector } from 'react-redux';
+import { handlePageChange, handlePageSizeChange } from '../../store/liquidacionStore/liquidacionThunks';
 import '../../styles/Pagination.css';
 
-// Importar datos mock para calcular paginación
-import { mockTramites } from '../data/mockData';
-
 const Pagination = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const dispatch = useDispatch();
+  const { paginado_info } = useSelector(state => state.liquidacionStore);
 
-  const count = mockTramites.length;
-  const totalPages = Math.ceil(count / pageSize);
+  const { count, current_page, total_pages, page_size } = paginado_info;
 
-  const startIndex = count === 0 ? 0 : (currentPage - 1) * pageSize + 1;
-  const endIndex = Math.min(currentPage * pageSize, count);
+  const startIndex = count === 0 ? 0 : (current_page - 1) * page_size + 1;
+  const endIndex = Math.min(current_page * page_size, count);
 
   const handleFirstPage = () => {
-    setCurrentPage(1);
+    dispatch(handlePageChange(1));
   };
 
   const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(prev => prev - 1);
+    if (current_page > 1) {
+      dispatch(handlePageChange(current_page - 1));
     }
   };
 
   const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(prev => prev + 1);
+    if (current_page < total_pages) {
+      dispatch(handlePageChange(current_page + 1));
     }
   };
 
   const handleLastPage = () => {
-    setCurrentPage(totalPages);
+    dispatch(handlePageChange(total_pages));
   };
 
   const handleRowsPerPageChange = (event) => {
     const newPageSize = event.target.value;
-    setPageSize(newPageSize);
-    setCurrentPage(1); // Reset to first page when changing page size
+    dispatch(handlePageSizeChange(newPageSize));
   };
 
   return (
@@ -68,7 +65,7 @@ const Pagination = () => {
           <span>
             <IconButton
               onClick={handleFirstPage}
-              disabled={currentPage === 1}
+              disabled={current_page === 1}
               className="nav-button"
               size="small"
             >
@@ -81,7 +78,7 @@ const Pagination = () => {
           <span>
             <IconButton
               onClick={handlePreviousPage}
-              disabled={currentPage === 1}
+              disabled={current_page === 1}
               className="nav-button"
               size="small"
             >
@@ -92,7 +89,7 @@ const Pagination = () => {
 
         <Box className="page-indicator">
           <Typography variant="body2">
-            Página <strong>{currentPage}</strong> de <strong>{totalPages}</strong>
+            Página <strong>{current_page}</strong> de <strong>{total_pages || 1}</strong>
           </Typography>
         </Box>
 
@@ -100,7 +97,7 @@ const Pagination = () => {
           <span>
             <IconButton
               onClick={handleNextPage}
-              disabled={currentPage >= totalPages}
+              disabled={current_page >= total_pages}
               className="nav-button"
               size="small"
             >
@@ -113,7 +110,7 @@ const Pagination = () => {
           <span>
             <IconButton
               onClick={handleLastPage}
-              disabled={currentPage >= totalPages}
+              disabled={current_page >= total_pages}
               className="nav-button"
               size="small"
             >
@@ -128,7 +125,7 @@ const Pagination = () => {
           Filas:
         </Typography>
         <Select
-          value={pageSize}
+          value={page_size}
           onChange={handleRowsPerPageChange}
           size="small"
           className="rows-select-input"

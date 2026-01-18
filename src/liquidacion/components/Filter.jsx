@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Paper,
   Grid,
   TextField,
+  MenuItem,
   Button,
   Box,
   Chip,
@@ -16,37 +17,27 @@ import {
   CalendarToday,
   DirectionsCar,
 } from '@mui/icons-material';
+import { useSelector, useDispatch } from 'react-redux';
+import { filterFieldThunk, applyFilters, handleClearFilters } from '../../store/liquidacionStore/liquidacionThunks';
 import '../../styles/Filter.css';
 
 const Filter = () => {
-  const [filters, setFilters] = useState({
-    search: '',
-    startDate: '',
-    endDate: '',
-  });
+  const dispatch = useDispatch();
+  const { filters } = useSelector(state => state.liquidacionStore);
 
   // Contar filtros activos
   const activeFiltersCount = Object.values(filters).filter(value => value !== '').length;
 
   const handleChange = (field, value) => {
-    setFilters(prev => ({
-      ...prev,
-      [field]: value
-    }));
+    dispatch(filterFieldThunk({ field, value }));
   };
 
   const handleApplyFilters = () => {
-    console.log('Aplicando filtros:', filters);
-    // TODO: Implementar lógica de filtrado cuando se conecte al backend
-    // Por ahora solo mostramos en consola
+    dispatch(applyFilters(filters));
   };
 
   const handleClear = () => {
-    setFilters({
-      search: '',
-      startDate: '',
-      endDate: '',
-    });
+    dispatch(handleClearFilters());
   };
 
   const handleKeyPress = (e) => {
@@ -55,12 +46,20 @@ const Filter = () => {
     }
   };
 
+  // Estados disponibles para Liquidación
+  const estadosDisponibles = [
+    { value: '', label: 'Todos los estados' },
+    { value: 'pendiente', label: 'Pendiente' },
+    { value: 'liquidado', label: 'Liquidado' },
+    { value: 'pagado', label: 'Pagado' },
+  ];
+
   return (
     <Paper className="filter-paper">
       <Box className="filter-header">
         <Box display="flex" alignItems="center" gap={1}>
           <FilterList color="inherit" />
-          <span className="filter-title">Filtros de Búsqueda</span>
+          <span className="filter-title">Filtros de Liquidaciones</span>
           {activeFiltersCount > 0 && (
             <Chip
               label={`${activeFiltersCount} filtro${activeFiltersCount > 1 ? 's' : ''}`}
@@ -82,15 +81,15 @@ const Filter = () => {
             <TextField
               fullWidth
               size="small"
-              label="Buscar"
-              placeholder="Buscar por placa, trámite o proveedor..."
+              label="Buscar Liquidación"
+              placeholder="Buscar por placa, trámite, proveedor, cliente..."
               value={filters.search}
               onChange={(e) => handleChange('search', e.target.value)}
               onKeyPress={handleKeyPress}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <DirectionsCar sx={{ color: 'primary.main', fontSize: 28 }} />
+                    <Search sx={{ color: 'primary.main', fontSize: 24 }} />
                   </InputAdornment>
                 ),
                 endAdornment: filters.search && (
@@ -107,9 +106,9 @@ const Filter = () => {
               }}
               sx={{
                 '& .MuiOutlinedInput-root': {
-                  backgroundColor: 'rgba(102, 126, 234, 0.04)',
+                  backgroundColor: 'rgba(0, 168, 89, 0.04)',
                   '&:hover': {
-                    backgroundColor: 'rgba(102, 126, 234, 0.08)',
+                    backgroundColor: 'rgba(0, 168, 89, 0.08)',
                   },
                   '&.Mui-focused': {
                     backgroundColor: 'white',
@@ -119,12 +118,22 @@ const Filter = () => {
             />
           </Grid>
 
-          {/* Filtros Secundarios */}
-          <Grid item xs={12}>
-            <Box className="secondary-filters-label">
-              <FilterList fontSize="small" sx={{ mr: 0.5 }} />
-              Filtros Adicionales
-            </Box>
+          {/* Estado */}
+          <Grid item xs={12} sm={6} md={4}>
+            <TextField
+              fullWidth
+              select
+              size="small"
+              label="Estado"
+              value={filters.estado}
+              onChange={(e) => handleChange('estado', e.target.value)}
+            >
+              {estadosDisponibles.map((estado) => (
+                <MenuItem key={estado.value} value={estado.value}>
+                  {estado.label}
+                </MenuItem>
+              ))}
+            </TextField>
           </Grid>
 
           {/* Fecha inicio */}
@@ -134,11 +143,9 @@ const Filter = () => {
               size="small"
               type="date"
               label="Fecha Desde"
-              value={filters.startDate}
-              onChange={(e) => handleChange('startDate', e.target.value)}
-              InputLabelProps={{
-                shrink: true,
-              }}
+              value={filters.start_date}
+              onChange={(e) => handleChange('start_date', e.target.value)}
+              InputLabelProps={{ shrink: true }}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -156,11 +163,9 @@ const Filter = () => {
               size="small"
               type="date"
               label="Fecha Hasta"
-              value={filters.endDate}
-              onChange={(e) => handleChange('endDate', e.target.value)}
-              InputLabelProps={{
-                shrink: true,
-              }}
+              value={filters.end_date}
+              onChange={(e) => handleChange('end_date', e.target.value)}
+              InputLabelProps={{ shrink: true }}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -169,7 +174,7 @@ const Filter = () => {
                 ),
               }}
               inputProps={{
-                min: filters.startDate || undefined
+                min: filters.start_date || undefined
               }}
             />
           </Grid>
@@ -192,7 +197,6 @@ const Filter = () => {
               <Button
                 size="small"
                 variant="contained"
-                color="primary"
                 onClick={handleApplyFilters}
                 startIcon={<Search />}
                 sx={{

@@ -12,6 +12,7 @@ import { archivadasStore } from './archivadasStore/archivadasStore';
 import { clienteStore } from './clienteStore/clienteStore';
 import { tramitesStore } from './tramitesStore/tramitesStore';
 import { transitosTarifasStore } from './transitosTarifasStore/transitosTarifasStore';
+import { liquidacionStore } from './liquidacionStore/liquidacionStore';
 
 export const store = configureStore({
   reducer: {
@@ -28,5 +29,6 @@ export const store = configureStore({
     clienteStore: clienteStore.reducer,
     tramitesStore: tramitesStore.reducer,
     transitosTarifasStore: transitosTarifasStore.reducer,
+    liquidacionStore: liquidacionStore.reducer,
   }
 })
