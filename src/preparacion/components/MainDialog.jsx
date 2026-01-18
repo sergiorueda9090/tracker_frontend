@@ -34,7 +34,7 @@ const MainDialog = ({ open, onClose }) => {
   const {
     id, placa, departamento, municipio, tipo_vehiculo,
     estado, paquete, lista_documentos, proveedor_id,
-    cliente_id
+    cliente_id, tramite_id
   } = useSelector(state => state.preparacionStore);
 
   const { departamentos, municipios } = useSelector(state => state.departamentosMunicipiosStore);
@@ -44,6 +44,7 @@ const MainDialog = ({ open, onClose }) => {
   const [selectedDocumento, setSelectedDocumento] = useState(null);
   const [archivos, setArchivos] = useState([]);
   const [dragActive, setDragActive] = useState(false);
+  const [gestoresDisponibles, setGestoresDisponibles] = useState([]);
 
   // Tipos de vehículo disponibles
   const tiposVehiculo = [
@@ -81,6 +82,16 @@ const MainDialog = ({ open, onClose }) => {
     dispatch(getAllClientes());
   }, [dispatch]);
 
+  // Cargar gestores cuando hay un trámite seleccionado (para edición)
+  useEffect(() => {
+    if (tramite_id && tramite_by_location.length > 0) {
+      const tramiteSeleccionado = tramite_by_location.find(t => t.tramite_id === tramite_id);
+      if (tramiteSeleccionado && tramiteSeleccionado.gestores) {
+        setGestoresDisponibles(tramiteSeleccionado.gestores);
+      }
+    }
+  }, [tramite_id, tramite_by_location]);
+
   const handleChangeForm = (e) => {
     const { name, value } = e.target;
     dispatch(handleFormStoreThunk({ name, value }));
@@ -92,14 +103,18 @@ const MainDialog = ({ open, onClose }) => {
     // Limpiar proveedor_id al cambiar departamento o municipio
 
     if (name === 'municipio') {
-      dispatch(handleFormStoreThunk({ name: 'municipio',    value }));
+      dispatch(handleFormStoreThunk({ name: 'municipio', value }));
+      dispatch(handleFormStoreThunk({ name: 'tramite_id', value: null }));
       dispatch(handleFormStoreThunk({ name: 'proveedor_id', value: null }));
+      setGestoresDisponibles([]);
       return;
     }
 
     if (name === 'departamento') {
       dispatch(handleFormStoreThunk({ name: 'municipio', value: '' }));
+      dispatch(handleFormStoreThunk({ name: 'tramite_id', value: null }));
       dispatch(handleFormStoreThunk({ name: 'proveedor_id', value: null }));
+      setGestoresDisponibles([]);
       return;
     }
 
@@ -110,6 +125,24 @@ const MainDialog = ({ open, onClose }) => {
 
     if (name === 'proveedor_id') {
       dispatch(handleFormStoreThunk({ name: 'proveedor_id', value }));
+      return;
+    }
+
+    if (name === 'tramite_id') {
+      dispatch(handleFormStoreThunk({ name: 'tramite_id', value }));
+      dispatch(handleFormStoreThunk({ name: 'proveedor_id', value: null }));
+
+      // Filtrar gestores del trámite seleccionado
+      if (newValue) {
+        const tramiteSeleccionado = tramite_by_location.find(t => t.tramite_id === newValue.id);
+        if (tramiteSeleccionado && tramiteSeleccionado.gestores) {
+          setGestoresDisponibles(tramiteSeleccionado.gestores);
+        } else {
+          setGestoresDisponibles([]);
+        }
+      } else {
+        setGestoresDisponibles([]);
+      }
       return;
     }
 
@@ -213,23 +246,37 @@ const MainDialog = ({ open, onClose }) => {
   };
 
   const handleSave = () => {
-    if (!placa || !departamento || !municipio || !tipo_vehiculo || !proveedor_id || !cliente_id) {
-      dispatch(showAlert({
-        type: "error",
-        title: "⚠️ Formulario Incompleto",
-        text: "Los campos Placa, Proveedor, Cliente, Departamento, Municipio y Tipo de Vehículo son obligatorios."
-      }));
-      return;
+    // Validación de campos obligatorios
+    const camposObligatorios = [
+      { campo: placa, nombre: 'Placa del Vehículo' },
+      { campo: tipo_vehiculo, nombre: 'Tipo de Vehículo' },
+      { campo: cliente_id,    nombre: 'Cliente' },
+      { campo: departamento,  nombre: 'Departamento' },
+      { campo: municipio,     nombre: 'Municipio' },
+      { campo: tramite_id,    nombre: 'Trámite' },
+      { campo: proveedor_id,  nombre: 'Gestor' },
+    ];
+
+    for (const { campo, nombre } of camposObligatorios) {
+      if (!campo) {
+        dispatch(showAlert({
+          type: "error",
+          title: "Campo Requerido",
+          text: `El campo "${nombre}" es obligatorio.`
+        }));
+        return;
+      }
     }
 
     const formData = new FormData();
-    formData.append('placa', placa.toUpperCase());
-    formData.append('departamento', departamento);
-    formData.append('municipio', municipio);
-    formData.append('proveedor_id', proveedor_id);
-    formData.append('cliente_id', cliente_id);
-    formData.append('tipo_vehiculo', tipo_vehiculo);
-    formData.append('estado', estado);
+    formData.append('placa',            placa.toUpperCase());
+    formData.append('tipo_vehiculo',    tipo_vehiculo);
+    formData.append('cliente_id',       cliente_id);
+    formData.append('departamento',     departamento);
+    formData.append('municipio',        municipio);
+    formData.append('tramite_id',       tramite_id);
+    formData.append('proveedor_id',     proveedor_id);
+    formData.append('estado',           estado);
     formData.append('lista_documentos', JSON.stringify(lista_documentos));
 
     // Agregar archivos al FormData
@@ -355,44 +402,51 @@ const MainDialog = ({ open, onClose }) => {
             </Box>
           </Box>
               
-          {/* Trámite */}
+          {/* Trámite y Gestor */}
           <Box sx={{ display: 'flex', gap: 2 }}>
             <Autocomplete
               fullWidth
+              disabled={!departamento || !municipio}
               options={tramite_by_location.map(c => ({
-                label: c.nombre + ' - ' + c.nit,
-                id: c.id
+                label: c.tramite_nombre,
+                id: c.tramite_id
               }))}
               value={
-                clientes
-                  .map(c => ({ label: c.nombre + ' - ' + c.nit, id: c.id }))
-                  .find(opt => opt.id == cliente_id) || null
+                tramite_by_location
+                  .map(c => ({ label: c.tramite_nombre, id: c.tramite_id }))
+                  .find(opt => opt.id == tramite_id) || null
               }
-              onChange={(event, newValue) => handleAutocompleteChange('cliente_id', newValue)}
+              onChange={(event, newValue) => handleAutocompleteChange('tramite_id', newValue)}
               isOptionEqualToValue={(option, value) => option.id === value.id}
               renderInput={(params) => (
-                <TextField {...params} label="Trámite *" />
+                <TextField {...params} label="Trámite *" placeholder={!municipio ? "Seleccione ubicación primero" : ""} />
               )}
-              noOptionsText="No hay Trámites disponibles"
+              noOptionsText="No hay Trámites disponibles para esta ubicación"
             />
 
             <Autocomplete
               fullWidth
-              options={providers.map(d => ({
-                label: d.nombre + ' - ' + d.codigo_encargado,
-                id: d.id
+              disabled={!tramite_id}
+              options={gestoresDisponibles.map(g => ({
+                label: g.proveedor_nombre + ' - ' + g.proveedor_codigo,
+                id: g.proveedor_id,
+                servicio_gestor: g.servicio_gestor,
+                servicio_empresa: g.servicio_empresa
               }))}
               value={
-                providers
-                  .map(d => ({ label: d.nombre + ' - ' + d.codigo_encargado, id: d.id }))
+                gestoresDisponibles
+                  .map(g => ({
+                    label: g.proveedor_nombre + ' - ' + g.proveedor_codigo,
+                    id: g.proveedor_id
+                  }))
                   .find(opt => opt.id == proveedor_id) || null
               }
               onChange={(event, newValue) => handleAutocompleteChange('proveedor_id', newValue)}
               isOptionEqualToValue={(option, value) => option.id === value.id}
               renderInput={(params) => (
-                <TextField {...params} label="Gestor                                                                                                                                                                                                                                                                                                                                                                                             " required />
+                <TextField {...params} label="Gestor *" placeholder={!tramite_id ? "Seleccione un trámite primero" : ""} />
               )}
-              noOptionsText="No hay Gestores disponibles"
+              noOptionsText="No hay Gestores disponibles para este trámite"
             />
           </Box>
          

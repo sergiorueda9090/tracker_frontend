@@ -181,6 +181,7 @@ const MainTable = () => {
               <TableCell><strong>Placa</strong></TableCell>
               <TableCell><strong>Tipo Vehículo</strong></TableCell>
               <TableCell><strong>Ubicación</strong></TableCell>
+              <TableCell><strong>Trámite</strong></TableCell>
               <TableCell align="center"><strong>Estado</strong></TableCell>
               <TableCell align="center"><strong>Fecha Recepción</strong></TableCell>
               <TableCell align="center"><strong>Hace</strong></TableCell>
@@ -217,6 +218,12 @@ const MainTable = () => {
                     <Typography variant="body2" color="text.secondary">
                       {tramite.nombre_depto || 'N/A'} - {tramite.nombre_muni || 'N/A'}
                     </Typography>
+                  </TableCell>
+
+                  <TableCell>
+                      <Typography variant="body2" color="text.secondary">
+                        {tramite.nombre_tramite}
+                      </Typography>
                   </TableCell>
 
                   <TableCell align="center">

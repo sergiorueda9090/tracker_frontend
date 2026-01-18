@@ -250,6 +250,7 @@ const MainTable = () => {
               <TableCell><strong>Gestor</strong></TableCell>
               <TableCell><strong>Cliente</strong></TableCell>
               <TableCell><strong>Ubicación</strong></TableCell>
+              <TableCell><strong>Trámite</strong></TableCell>
               <TableCell align="center"><strong>Estado</strong></TableCell>
               <TableCell align="center"><strong>Documentos</strong></TableCell>
               <TableCell align="center"><strong>Archivos</strong></TableCell>
@@ -299,6 +300,11 @@ const MainTable = () => {
                   </Typography>
                 </TableCell>
 
+                <TableCell>
+                  <Typography variant="body2" color="text.secondary">
+                    {tramite.nombre_tramite}
+                  </Typography>
+                </TableCell>
                 
 
                 <TableCell align="center">
