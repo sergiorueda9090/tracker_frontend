@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getAllThunks as getAllDepartamentos, showThunk as showMunicipios } from '../../store/departamentosMunicipiosStore/departamentosMunicipiosThunks';
 import { getAllThunks as getAllProveedores } from '../../store/proveedoresStore/proveedoresThunks';
 import { getAllThunks as getAllClientes } from '../../store/clienteStore/clienteThunks';
+import { getTramitesByLocationThunks } from '../../store/transitosTarifasStore/transitosTarifasThunks';
 
 import {
   handleFormStoreThunk, createThunks, updateThunks,
@@ -39,7 +40,7 @@ const MainDialog = ({ open, onClose }) => {
   const { departamentos, municipios } = useSelector(state => state.departamentosMunicipiosStore);
   const { providers } = useSelector(state => state.proveedoresStore);
   const { clientes } = useSelector(state => state.clienteStore);
-  console.log("Clientes disponibles:", clientes);
+  const { tramite_by_location } = useSelector(state => state.transitosTarifasStore);
   const [selectedDocumento, setSelectedDocumento] = useState(null);
   const [archivos, setArchivos] = useState([]);
   const [dragActive, setDragActive] = useState(false);
@@ -65,6 +66,8 @@ const MainDialog = ({ open, onClose }) => {
 
   useEffect(() => {
     dispatch(getAllProveedores());
+    console.log("Departamento o Municipio cambiados:", departamento, municipio);
+    dispatch(getTramitesByLocationThunks(departamento, municipio));
   }, [departamento, municipio]);
   
   useEffect(() => {
@@ -282,6 +285,28 @@ const MainDialog = ({ open, onClose }) => {
             </TextField>
           </Box>
             
+          {/* Clientes */}
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <Autocomplete
+              fullWidth
+              options={clientes.map(c => ({
+                label: c.nombre + ' - ' + c.nit,
+                id: c.id
+              }))}
+              value={
+                clientes
+                  .map(c => ({ label: c.nombre + ' - ' + c.nit, id: c.id }))
+                  .find(opt => opt.id == cliente_id) || null
+              }
+              onChange={(event, newValue) => handleAutocompleteChange('cliente_id', newValue)}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+              renderInput={(params) => (
+                <TextField {...params} label="Cliente *" />
+              )}
+              noOptionsText="No hay Clientes disponibles"
+            />
+          </Box>
+         
 
           {/* Ubicación */}
           <Box>
@@ -330,11 +355,11 @@ const MainDialog = ({ open, onClose }) => {
             </Box>
           </Box>
               
-          {/* Clientes */}
+          {/* Trámite */}
           <Box sx={{ display: 'flex', gap: 2 }}>
             <Autocomplete
               fullWidth
-              options={clientes.map(c => ({
+              options={tramite_by_location.map(c => ({
                 label: c.nombre + ' - ' + c.nit,
                 id: c.id
               }))}
@@ -346,9 +371,9 @@ const MainDialog = ({ open, onClose }) => {
               onChange={(event, newValue) => handleAutocompleteChange('cliente_id', newValue)}
               isOptionEqualToValue={(option, value) => option.id === value.id}
               renderInput={(params) => (
-                <TextField {...params} label="Cliente *" />
+                <TextField {...params} label="Trámite *" />
               )}
-              noOptionsText="No hay Clientes disponibles"
+              noOptionsText="No hay Trámites disponibles"
             />
 
             <Autocomplete

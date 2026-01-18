@@ -1,17 +1,52 @@
 import axios from "axios";
 import { handleFormStore, resetFormStore, loadForEditStore,
         handleDataStore, setPaginationPage, setPaginationPageSize,
-        setFilters, clearFilters, setFilterField } from "./transitosTarifasStore.js";
+        setFilters, clearFilters, setFilterField, handleDataLocationStore } from "./transitosTarifasStore.js";
 import { showBackDropStore, hideBackDropStore, showAlert } from "../globalStore/globalStore.js";
 import { openModalShared, closeModalShared } from "../globalStore/globalStore.js";
 
 // URL de la API backend http://127.0.0.1:8000
 import { URL } from "../../constants/constantGlogal.js";
-const namespace_api      = "/api/transitotarifas/";
-const endpoint           = "list/";
-const endpoint_delete    = "/delete/";
-const endpoint_create    = "create/";
-const endpoint_update    = "update/";
+const namespace_api        = "/api/transitotarifas/";
+const tramites_by_location = "tramites-by-location/";
+const endpoint             = "list/";
+const endpoint_delete      = "/delete/";
+const endpoint_create      = "create/";
+const endpoint_update     = "update/";
+
+
+export const getTramitesByLocationThunks = (departamento_id = "", municipio_id = "") => {
+
+    return async (dispatch, getState) => {
+        const {authStore} = getState();
+        const token       = authStore.token
+        await dispatch(showBackDropStore());
+        const options = {
+            method: 'GET',
+            url: `${URL}${namespace_api}${tramites_by_location}?departamento_id=${departamento_id}&municipio_id=${municipio_id}`,
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          };
+            try {
+            // Hacer la solicitud
+            const response = await axios.request(options);
+            if(response.status === 200){
+                dispatch(handleDataLocationStore({ tramite_by_location: response.data.tramites }));
+            }else{
+                dispatch(handleDataLocationStore({ tramite_by_location: [] }));
+                console.error("⚠️ Error al obtener trámites por ubicación:", response);
+            }
+        } catch (error) {
+            console.error("❌ Error en el servidor:", error);
+            dispatch(handleDataLocationStore({ tramite_by_location: [] }));
+            return [];
+        } finally {
+            await dispatch(hideBackDropStore());
+        }
+    }
+
+}
 
 
 export const getAllThunks = ({

@@ -1,7 +1,11 @@
 
-//export const URL  = 'https://backendtracker.movilidad2a.com';
-export const URL = 'http://127.0.0.1:8000';
-//export const URLws = '127.0.0.1:8000';
+// ===== URL API =====
+//export const URL  = 'https://backendtracker.movilidad2a.com'; // Producción
+export const URL = 'http://127.0.0.1:8000'; // Local
+
+// ===== URL WebSocket =====
+//export const URL_WEBSOCKET = 'wss://backendtracker.movilidad2a.com'; // Producción
+export const URL_WEBSOCKET = 'ws://127.0.0.1:8000'; // Local
 
 export const TOKEN = (() => {
     const token = localStorage.getItem("access"); // Obtener el valor almacenado

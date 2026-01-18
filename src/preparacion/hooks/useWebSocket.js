@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-const url_websocket = 'wss://backendtracker.movilidad2a.com';
+import { URL_WEBSOCKET } from '../../constants/constantGlogal';
 
 const useWebSocket = (url) => {
   const [isConnected, setIsConnected] = useState(false);
@@ -9,7 +9,7 @@ const useWebSocket = (url) => {
 
   useEffect(() => {
     // Crear conexión WebSocket
-    const wsUrl = url.startsWith('ws') ? url : `${url_websocket}${url}`;
+    const wsUrl = url.startsWith('ws') ? url : `${URL_WEBSOCKET}${url}`;
     ws.current = new WebSocket(wsUrl);
 
     ws.current.onopen = () => {

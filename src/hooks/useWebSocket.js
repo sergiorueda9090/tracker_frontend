@@ -1,7 +1,6 @@
 // src/hooks/useWebSocket.js
 import { useEffect, useRef, useState } from 'react';
-
-const url_websocket = 'wss://backendtracker.movilidad2a.com';
+import { URL_WEBSOCKET } from '../constants/constantGlogal.js';
 
 const useWebSocket = (url) => {
   const [isConnected, setIsConnected] = useState(false);
@@ -54,7 +53,7 @@ const useWebSocket = (url) => {
     const token = getToken();
     
     // Crear conexión WebSocket
-    let wsUrl = url.startsWith('ws') ? url : `${url_websocket}${url}`;
+    let wsUrl = url.startsWith('ws') ? url : `${URL_WEBSOCKET}${url}`;
     
     // Agregar token si existe
     if (token) {

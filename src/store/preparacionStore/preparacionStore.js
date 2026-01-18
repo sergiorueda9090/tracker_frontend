@@ -6,6 +6,7 @@ const initialState = {
   placa: '',
   departamento: '',
   municipio: '',
+  tramite_id: null,
   proveedor_id: null,
   cliente_id: null,
   tipo_vehiculo: '',
@@ -73,6 +74,7 @@ export const preparacionStore = createSlice({
       state.placa = '';
       state.departamento = '';
       state.municipio = '';
+      state.tramite_id = null;
       state.proveedor_id = '';
       state.cliente_id = null;
       state.tipo_vehiculo = '';
@@ -90,6 +92,7 @@ export const preparacionStore = createSlice({
       state.id = tramite.id;
       state.placa = tramite.placa || '';
       state.departamento = tramite.departamento || '';
+      state.tramite_id = tramite.tramite_id || null;
       state.proveedor_id = tramite.proveedor_id || '';
       state.cliente_id = tramite.cliente_id || null;
       state.municipio = tramite.municipio || '';

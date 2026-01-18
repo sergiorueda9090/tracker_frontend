@@ -8,6 +8,7 @@ export const transitosTarifasStore = createSlice({
     departamento: '',
     municipio: '',
     tramites_data: [], // Array de trámites con sus gestores
+    tramite_by_location: [], // Trámites filtrados por ubicación
     is_active: true,
     transito_tarifas: [],
     paginado_info: {
@@ -45,6 +46,7 @@ export const transitosTarifasStore = createSlice({
       state.departamento = '';
       state.municipio = '';
       state.tramites_data = [];
+      state.tramite_by_location = [];
       state.is_active = true;
     },
     // Cargar tránsito tarifa para edición
@@ -82,6 +84,9 @@ export const transitosTarifasStore = createSlice({
       };
       state.paginado_info.current_page = 1;
     },
+    handleDataLocationStore: (state, action) => {
+      state.tramite_by_location = action.payload.tramite_by_location;
+    },
   },
 });
 
@@ -95,6 +100,7 @@ export const {
   setFilters,
   setFilterField,
   clearFilters,
+  handleDataLocationStore,
 } = transitosTarifasStore.actions;
 
 export default transitosTarifasStore.reducer;
