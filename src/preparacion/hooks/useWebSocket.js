@@ -8,12 +8,12 @@ const useWebSocket = (url) => {
   const ws = useRef(null);
 
   useEffect(() => {
-    // Crear conexión WebSocket
+    // Crear conexion WebSocket
     const wsUrl = url.startsWith('ws') ? url : `${URL_WEBSOCKET}${url}`;
     ws.current = new WebSocket(wsUrl);
 
     ws.current.onopen = () => {
-      console.log('✅ WebSocket conectado');
+      console.log('WebSocket Preparacion conectado');
       setIsConnected(true);
       setError(null);
     };
@@ -21,7 +21,7 @@ const useWebSocket = (url) => {
     ws.current.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
-        console.log('📩 Mensaje recibido:', data);
+        console.log('Mensaje Preparacion recibido:', data);
         setLastMessage(data);
       } catch (err) {
         console.error('Error al parsear mensaje:', err);
@@ -29,12 +29,12 @@ const useWebSocket = (url) => {
     };
 
     ws.current.onerror = (error) => {
-      console.error('❌ Error en WebSocket:', error);
+      console.error('Error en WebSocket Preparacion:', error);
       setError(error);
     };
 
     ws.current.onclose = () => {
-      console.log('🔌 WebSocket desconectado');
+      console.log('WebSocket Preparacion desconectado');
       setIsConnected(false);
     };
 
@@ -46,13 +46,13 @@ const useWebSocket = (url) => {
     };
   }, [url]);
 
-  // Función para enviar mensajes
+  // Funcion para enviar mensajes
   const sendMessage = (message) => {
     if (ws.current && ws.current.readyState === WebSocket.OPEN) {
       ws.current.send(JSON.stringify(message));
-      console.log('📤 Mensaje enviado:', message);
+      console.log('Mensaje Preparacion enviado:', message);
     } else {
-      console.warn('⚠️ WebSocket no está conectado');
+      console.warn('WebSocket Preparacion no esta conectado');
     }
   };
 

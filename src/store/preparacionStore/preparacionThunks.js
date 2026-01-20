@@ -115,6 +115,7 @@ export const showThunk = (id = "") => {
                                   departamento: response.data.departamento,
                                   municipio: response.data.municipio,
                                   proveedor_id: response.data.proveedor_id,
+                                  tramite_id: response.data.tramite_id,
                                   cliente_id: response.data.cliente_id,
                                   estado: response.data.estado,
                                   paquete: response.data.paquete,

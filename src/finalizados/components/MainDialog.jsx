@@ -278,9 +278,9 @@ const MainDialog = ({ open, onClose }) => {
                 </li>
               )}
               renderInput={(params) => (
-                <TextField {...params} label="Proveedor" required />
+                <TextField {...params} label="Gestor" required />
               )}
-              noOptionsText="No hay proveedores"
+              noOptionsText="No hay Gestor"
             />
               <Autocomplete
                 fullWidth

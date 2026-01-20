@@ -41,6 +41,7 @@ const MainDialog = ({ open, onClose }) => {
   const { providers } = useSelector(state => state.proveedoresStore);
   const { clientes } = useSelector(state => state.clienteStore);
   const { tramite_by_location } = useSelector(state => state.transitosTarifasStore);
+  
   const [selectedDocumento, setSelectedDocumento] = useState(null);
   const [archivos, setArchivos] = useState([]);
   const [dragActive, setDragActive] = useState(false);
