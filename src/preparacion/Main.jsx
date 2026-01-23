@@ -124,6 +124,7 @@ const Main = () => {
 
   const handleCloseDialog = () => {
     dispatch(closeModalShared());
+    dispatch(resetFormStore());
   };
 
   // Handler para cerrar notificación

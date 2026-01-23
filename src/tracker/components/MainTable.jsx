@@ -33,6 +33,7 @@ import {
   History,
   LocalShipping,
   DoneAll,
+  TaskAlt,
   Folder,
   FolderOpen,
   PictureAsPdf,
@@ -63,7 +64,7 @@ const MainTable = () => {
     dispatch(getAllThunks()); 
   }, []); // Sin dependencia de dispatch
 
-  const { tramites } = useSelector(state => state.trackerStore);
+  const { tramites, estado_tracker } = useSelector(state => state.trackerStore);
 
   // WebSocket para actualizaciones en tiempo real
   const { lastMessage } = useWebSocket('/ws/tracker/');
@@ -448,6 +449,20 @@ const MainTable = () => {
                         </IconButton>
                       </Tooltip>
 
+                          {
+                            tramite.estado_tracker === "finalizado" && (
+                              <Tooltip title="Finalizar Trámite">
+                                <IconButton
+                                  size="small"
+                                  color="success"
+                                  onClick={() => handleFinalizarTramite(tramite)}
+                                >
+                                  <TaskAlt fontSize="small" />
+                                </IconButton>
+                              </Tooltip>
+                            )
+                          }
+
                       <Tooltip title="Eliminar">
                         <IconButton size="small" color="error" onClick={() => handleDelete(tramite)}>
                           <Delete fontSize="small" />
@@ -461,16 +476,6 @@ const MainTable = () => {
                           onClick={() => handleVerTrazabilidad(tramite.id)}
                         >
                           <History fontSize="small" />
-                        </IconButton>
-                      </Tooltip>
-
-                      <Tooltip title="Finalizar Trámite">
-                        <IconButton
-                          size="small"
-                          color="success"
-                          onClick={() => handleFinalizarTramite(tramite)}
-                        >
-                          <DoneAll fontSize="small" />
                         </IconButton>
                       </Tooltip>
 

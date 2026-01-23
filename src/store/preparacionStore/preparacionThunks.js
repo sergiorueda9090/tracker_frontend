@@ -272,6 +272,8 @@ export const updateThunks = (id, data) => {
 
                 await dispatch( closeModalShared() );
 
+                await dispatch( resetFormStore() );
+
                 await dispatch( hideBackDropStore() );
             }else{
 

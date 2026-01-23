@@ -398,15 +398,20 @@ const MainTable = () => {
                       </IconButton>
                     </Tooltip>
 
-                    <Tooltip title="Enviar al Tracker">
-                      <IconButton
-                        size="small"
-                        color="success"
-                        onClick={() => handleSendToTracker(tramite)}
-                      >
-                        <Send fontSize="small" />
-                      </IconButton>
-                    </Tooltip>
+                    {
+                      tramite.estado == "para_radicacion" && (
+                        <Tooltip title="Enviar al Tracker">
+                          <IconButton
+                            size="small"
+                            color="success"
+                            onClick={() => handleSendToTracker(tramite)}
+                          >
+                            <Send fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                      )
+                    }
+
                   </Box>
                 </TableCell>
 

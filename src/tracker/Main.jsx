@@ -93,6 +93,7 @@ const Main = () => {
   };
 
   const handleCloseDialog = () => {
+    dispatch(resetFormStore());
     dispatch(closeModalShared());
   };
 

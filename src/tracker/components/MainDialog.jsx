@@ -23,7 +23,8 @@ const MainDialog = ({ open, onClose }) => {
     id, placa, departamento, municipio, tipo_vehiculo,
     estado, estado_detalle, fecha_recepcion_municipio, proveedor, preparacion, estado_tracker
   } = useSelector(state => state.trackerStore);
-
+  console.log("Estado Tracker:", estado_tracker);
+  
   const { departamentos, municipios } = useSelector(state => state.departamentosMunicipiosStore);
   const { providers } = useSelector(state => state.proveedoresStore);
   const {  tramites }   = useSelector(state => state.preparacionStore);
@@ -56,7 +57,6 @@ const MainDialog = ({ open, onClose }) => {
 
   // Estados disponibles
   const estadosDisponibles = [
-    { value: 'sin_tracker', label: 'Sin Tracker' },
     { value: 'en_radicacion', label: 'En Radicación' },
     { value: 'con_novedad', label: 'Con Novedad' },
     { value: 'finalizado', label: 'Finalizado' },
@@ -91,6 +91,21 @@ const MainDialog = ({ open, onClose }) => {
       estado_tracker: estado_tracker || 'sin_tracker',
     };
 
+    if(estado_tracker === 'con_novedad') {
+
+      if(!estado_detalle || estado_detalle.trim() === '') {
+        dispatch(showAlert({
+          type: "error",
+          title: "⚠️ Detalle del Estado Requerido",
+          text: "Por favor, proporcione un detalle del estado cuando el estado del trámite es 'Con Novedad'."
+        }));
+        return;
+      }
+
+    }else{
+      dataToSend.estado_detalle = '';
+    }
+
     if (id) {
       dispatch(updateThunks(id, dataToSend));
     } else {
@@ -108,7 +123,17 @@ const MainDialog = ({ open, onClose }) => {
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="lg" fullWidth>
+    <Dialog
+        open={open}
+        maxWidth="lg"
+        fullWidth
+        onClose={(event, reason) => {
+          if (reason === 'backdropClick' || reason === 'escapeKeyDown') {
+            return; // ❌ no cerrar
+          }
+          onClose(); // ✅ solo cerrar desde botones
+        }}
+      >
       <DialogTitle sx={{ color: '#00A859', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
         <Assignment /> {id ? 'Editar Trámite en Tracker' : 'Registrar Nuevo Trámite en Tracker'}
       </DialogTitle>
@@ -234,6 +259,7 @@ const MainDialog = ({ open, onClose }) => {
               value={estado_detalle || ''}
               onChange={handleChangeForm}
               placeholder="Descripción detallada del estado actual (opcional)"
+              disabled={estado_tracker == "con_novedad" ? false : true}
             />
           </Box>
 

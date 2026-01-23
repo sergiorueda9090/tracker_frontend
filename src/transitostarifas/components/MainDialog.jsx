@@ -45,10 +45,16 @@ import { getAllThunks as getAllDepartamentos, showThunk as showMunicipios } from
 
 // Funciones helper para formato de números colombiano
 const formatNumberColombia = (value) => {
-  if (!value && value !== 0) return '';
-  const numericValue = String(value).replace(/\./g, '').replace(/[^0-9]/g, '');
-  if (!numericValue) return '';
-  return new Intl.NumberFormat('es-CO').format(parseInt(numericValue, 10));
+  if (value === null || value === undefined || value === '') return '';
+
+  const number = Number(value);
+
+  if (isNaN(number)) return '';
+
+  return new Intl.NumberFormat('es-CO', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(number);
 };
 
 const unformatNumber = (value) => {

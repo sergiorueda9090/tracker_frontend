@@ -107,7 +107,17 @@ const MainDialog = ({ open, onClose }) => {
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="lg" fullWidth>
+    <Dialog
+        open={open}
+        maxWidth="lg"
+        fullWidth
+        onClose={(event, reason) => {
+          if (reason === 'backdropClick' || reason === 'escapeKeyDown') {
+            return; // ❌ no cerrar
+          }
+          onClose(); // ✅ solo cerrar desde botones
+        }}
+      >
       <DialogTitle sx={{ color: '#00A859', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
         <Assignment /> {id ? 'Editar Trámite en Tracker' : 'Registrar Nuevo Trámite en Tracker'}
       </DialogTitle>

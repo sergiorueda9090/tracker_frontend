@@ -396,7 +396,7 @@ const MainDialog = ({ open, onClose }) => {
                 Facturación sin IVA
               </Typography>
               <Typography variant="h6" fontWeight={600}>
-                {formatCurrency(total_facturacion_sin_iva)}
+                {formatCurrency(servicio_empresa)}
               </Typography>
             </Box>
 
