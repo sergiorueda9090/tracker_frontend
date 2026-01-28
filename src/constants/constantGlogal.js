@@ -1,10 +1,10 @@
 
 // ===== URL API =====
-export const URL  = 'https://backendtracker.movilidad2a.com'; // Producción
+export const URL  = 'https://tracker.movilidad2a.com'; // Producción
 //export const URL = 'http://127.0.0.1:8000'; // Local
 
 // ===== URL WebSocket =====
-export const URL_WEBSOCKET = 'wss://backendtracker.movilidad2a.com'; // Producción
+export const URL_WEBSOCKET = 'wss://tracker.movilidad2a.com'; // Producción
 //export const URL_WEBSOCKET = 'ws://127.0.0.1:8000'; // Local
 
 export const TOKEN = (() => {
