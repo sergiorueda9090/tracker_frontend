@@ -103,9 +103,9 @@ const MainDialog = ({ open, onClose }) => {
     }
   }, [departamento, dispatch]);
 
-  useEffect(() => {
-    dispatch(getAllProveedores());
-  }, [departamento, municipio]);
+  //useEffect(() => {
+  //  dispatch(getAllProveedores());
+  //}, [departamento, municipio]);
 
   // Resetear formulario cuando se cierre el modal
   useEffect(() => {
