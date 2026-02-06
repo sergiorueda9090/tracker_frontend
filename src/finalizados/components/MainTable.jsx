@@ -118,7 +118,7 @@ const MainTable = ({ onArchivar }) => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell><strong>ID</strong></TableCell>
+              <TableCell align="center" sx={{ width: 50 }}><strong>Historial</strong></TableCell>
               <TableCell><strong>Placa</strong></TableCell>
               <TableCell><strong>Tipo Vehículo</strong></TableCell>
               <TableCell><strong>Ubicación</strong></TableCell>
@@ -135,12 +135,27 @@ const MainTable = ({ onArchivar }) => {
           </TableHead>
 
           <TableBody>
+            {tramites.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={13} sx={{ py: 10, textAlign: 'center', borderBottom: 'none' }}>
+                  <Typography variant="body1" color="text.secondary" fontWeight={500}>
+                    No hay datos para mostrar
+                  </Typography>
+                </TableCell>
+              </TableRow>
+            )}
             {tramites.map((tramite) => (
                 <TableRow key={tramite.id} className="table-row">
-                  <TableCell>
-                    <Typography variant="body2" fontWeight={600} color="primary">
-                      #{tramite.id}
-                    </Typography>
+                  <TableCell align="center">
+                    <Tooltip title="Ver Historial">
+                      <IconButton
+                        size="small"
+                        color="secondary"
+                        onClick={() => handleVerTrazabilidad(tramite.id)}
+                      >
+                        <History fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
                   </TableCell>
 
                   <TableCell>
@@ -232,16 +247,6 @@ const MainTable = ({ onArchivar }) => {
                       <Tooltip title="Eliminar">
                         <IconButton size="small" color="error" onClick={() => handleDelete(tramite)}>
                           <Delete fontSize="small" />
-                        </IconButton>
-                      </Tooltip>
-
-                      <Tooltip title="Ver Historial">
-                        <IconButton
-                          size="small"
-                          color="secondary"
-                          onClick={() => handleVerTrazabilidad(tramite.id)}
-                        >
-                          <History fontSize="small" />
                         </IconButton>
                       </Tooltip>
                     </Box>

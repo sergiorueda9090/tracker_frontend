@@ -126,6 +126,15 @@ const MainTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
+            {clientes.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={8} sx={{ py: 10, textAlign: 'center', borderBottom: 'none' }}>
+                  <Typography variant="body1" color="text.secondary" fontWeight={500}>
+                    No hay datos para mostrar
+                  </Typography>
+                </TableCell>
+              </TableRow>
+            )}
             {clientes.map((cliente) => (
               <TableRow key={cliente.id} className="table-row">
                 <TableCell>{cliente.id}</TableCell>

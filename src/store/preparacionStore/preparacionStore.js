@@ -6,6 +6,7 @@ const initialState = {
   placa: '',
   departamento: '',
   municipio: '',
+  descripcion: '',
   tramite_id: null,
   proveedor_id: null,
   cliente_id: null,
@@ -72,6 +73,7 @@ export const preparacionStore = createSlice({
     resetFormStore: (state) => {
       state.id = null;
       state.placa = '';
+      state.descripcion = '';
       state.departamento = '';
       state.municipio = '';
       state.tramite_id = null;
@@ -90,6 +92,7 @@ export const preparacionStore = createSlice({
     loadForEditStore: (state, action) => {
       const tramite = action.payload;
       state.id = tramite.id;
+      state.descripcion = tramite.descripcion || '';
       state.placa = tramite.placa || '';
       state.departamento = tramite.departamento || '';
       state.tramite_id = tramite.tramite_id || null;

@@ -49,8 +49,8 @@ export const getAllThunks = ({
     if (end_date) params.append("end_date", end_date);
     if (departamento) params.append("departamento", departamento);
     if (municipio) params.append("municipio", municipio);
-    if (departamentoTT) params.append("departamento", departamentoTT);
-    if (municipioTT) params.append("municipio", municipioTT);
+    //if (departamentoTT) params.append("departamento", departamentoTT);
+    //if (municipioTT) params.append("municipio", municipioTT);
     
     const options = {
       method: "GET",

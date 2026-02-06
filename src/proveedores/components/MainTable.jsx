@@ -70,6 +70,15 @@ const MainTable = () => {
           </TableHead>
 
           <TableBody>
+            {providers.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={8} sx={{ py: 10, textAlign: 'center', borderBottom: 'none' }}>
+                  <Typography variant="body1" color="text.secondary" fontWeight={500}>
+                    No hay datos para mostrar
+                  </Typography>
+                </TableCell>
+              </TableRow>
+            )}
             {providers.map((prov) => (
               <TableRow key={prov.id} className="table-row">
                 

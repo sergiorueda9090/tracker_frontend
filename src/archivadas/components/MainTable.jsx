@@ -194,6 +194,15 @@ const MainTable = () => {
           </TableHead>
 
           <TableBody>
+            {tramites.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={13} sx={{ py: 10, textAlign: 'center', borderBottom: 'none' }}>
+                  <Typography variant="body1" color="text.secondary" fontWeight={500}>
+                    No hay datos para mostrar
+                  </Typography>
+                </TableCell>
+              </TableRow>
+            )}
             {tramites.map((tramite) => (
                 <TableRow key={tramite.id} className="table-row">
                   <TableCell>

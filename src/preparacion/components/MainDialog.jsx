@@ -6,11 +6,13 @@ import {
   ListItemText, ListItemSecondaryAction, Checkbox, Divider,
   Paper, Grid, Card, CardMedia, CardContent, CardActions
 } from '@mui/material';
+
 import {
   DirectionsCar, LocationOn, Assignment, Description,
   Add, Delete, Folder, CloudUpload, PictureAsPdf,
   Image as ImageIcon, Close
 } from '@mui/icons-material';
+
 import { useDispatch, useSelector } from 'react-redux';
 
 // Thunks
@@ -34,7 +36,7 @@ const MainDialog = ({ open, onClose }) => {
   const {
     id, placa, departamento, municipio, tipo_vehiculo,
     estado, paquete, lista_documentos, proveedor_id,
-    cliente_id, tramite_id
+    cliente_id, tramite_id, descripcion
   } = useSelector(state => state.preparacionStore);
 
   const { departamentos, municipios } = useSelector(state => state.departamentosMunicipiosStore);
@@ -278,6 +280,7 @@ const MainDialog = ({ open, onClose }) => {
     formData.append('tramite_id',       tramite_id);
     formData.append('proveedor_id',     proveedor_id);
     formData.append('estado',           estado);
+    formData.append('descripcion',      descripcion);
     formData.append('lista_documentos', JSON.stringify(lista_documentos));
 
     // Agregar archivos al FormData
@@ -478,6 +481,27 @@ const MainDialog = ({ open, onClose }) => {
                 </MenuItem>
               ))}
             </TextField>
+          </Box>
+
+          <Box>
+            <TextField
+              fullWidth
+              label="Descripción del trámite"
+              name="descripcion"
+              value={descripcion || ''}
+              onChange={handleChangeForm}
+              required
+              multiline
+              rows={3}
+              inputProps={{ style: { textTransform: 'uppercase' } }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Description />
+                  </InputAdornment>
+                ),
+              }}
+            />
           </Box>
 
           

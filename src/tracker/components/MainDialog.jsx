@@ -56,11 +56,16 @@ const MainDialog = ({ open, onClose }) => {
   ];
 
   // Estados disponibles
-  const estadosDisponibles = [
-    { value: 'en_radicacion', label: 'En Radicación' },
-    { value: 'con_novedad', label: 'Con Novedad' },
-    { value: 'finalizado', label: 'Finalizado' },
-  ];
+ const estadosDisponibles = [
+  { value: 'en_radicacion', label: 'En radicación' },
+  { value: 'pte_agenda',    label: 'Pendiente de agenda' },
+  { value: 'con_novedad',   label: 'Con novedad' },
+  { value: 'aprobado',      label: 'Aprobado' },
+  { value: 'enviado',       label: 'Enviado' },
+  { value: 'entregado',     label: 'Entregado' },
+  { value: 'finalizado',    label: 'Finalizado' },
+  { value: 'rechazado',     label: 'Rechazado' },
+];
 
 
   const handleChangeForm = (e) => {
@@ -263,7 +268,7 @@ const MainDialog = ({ open, onClose }) => {
             />
           </Box>
 
-          {/* Información Adicional */}
+          {/* Información Adicional 
           <Box>
             <Divider sx={{ mb: 2 }}>
               <Typography variant="caption" color="text.secondary" fontWeight={600}>
@@ -329,7 +334,7 @@ const MainDialog = ({ open, onClose }) => {
               />
             </Box>
           </Box>
-
+          */}
         </Box>
       </DialogContent>
 

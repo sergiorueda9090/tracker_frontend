@@ -112,6 +112,7 @@ export const showThunk = (id = "") => {
                                   id: response.data.id,
                                   placa: response.data.placa,
                                   tipo_vehiculo: response.data.tipo_vehiculo,
+                                  descripcion: response.data.descripcion,
                                   departamento: response.data.departamento,
                                   municipio: response.data.municipio,
                                   proveedor_id: response.data.proveedor_id,

@@ -182,8 +182,15 @@ const MainTable = () => {
     return archivos.reduce((total, archivo) => total + archivo.tamaño, 0);
   };
 
-  // Función para obtener el chip de estado
-  const getEstadoChip = (estado) => {
+  // Función para truncar texto a un máximo de caracteres
+  const truncateText = (text, maxLength = 650) => {
+    if (!text) return '';
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength).trim() + '...';
+  };
+
+  // Función para obtener el chip de estado con tooltip de descripción
+  const getEstadoChip = (estado, descripcion) => {
     const estados = {
       'en_verificacion': {
         label: 'En Verificación',
@@ -208,14 +215,109 @@ const MainTable = () => {
     };
 
     const estadoConfig = estados[estado] || estados['en_verificacion'];
+    const truncatedDescription = truncateText(descripcion, 650);
+    const hasDescription = descripcion && descripcion.trim().length > 0;
 
-    return (
+    const chipElement = (
       <Chip
         label={estadoConfig.label}
         size="small"
         color={estadoConfig.color}
         icon={estadoConfig.icon}
+        sx={{
+          cursor: hasDescription ? 'help' : 'default',
+          transition: 'all 0.2s ease-in-out',
+          '&:hover': hasDescription ? {
+            transform: 'scale(1.05)',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+          } : {}
+        }}
       />
+    );
+
+    if (!hasDescription) {
+      return chipElement;
+    }
+
+    return (
+      <Tooltip
+        title={
+          <Box sx={{ p: 0.5 }}>
+            <Typography
+              variant="caption"
+              sx={{
+                fontWeight: 600,
+                color: 'inherit',
+                display: 'block',
+                mb: 0.5,
+                opacity: 0.8,
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px',
+                fontSize: '0.65rem'
+              }}
+            >
+              Descripción del trámite
+            </Typography>
+            <Typography
+              variant="body2"
+              sx={{
+                color: 'inherit',
+                lineHeight: 1.5,
+                fontSize: '0.8rem',
+                whiteSpace: 'pre-wrap',
+                wordBreak: 'break-word'
+              }}
+            >
+              {truncatedDescription}
+            </Typography>
+          </Box>
+        }
+        placement="top"
+        arrow
+        enterDelay={200}
+        leaveDelay={100}
+        slotProps={{
+          tooltip: {
+            sx: {
+              bgcolor: (theme) => theme.palette.mode === 'dark'
+                ? 'rgba(30, 41, 59, 0.98)'
+                : 'rgba(255, 255, 255, 0.98)',
+              color: (theme) => theme.palette.mode === 'dark'
+                ? '#f1f5f9'
+                : '#1e293b',
+              boxShadow: (theme) => theme.palette.mode === 'dark'
+                ? '0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1)'
+                : '0 8px 32px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.05)',
+              borderRadius: '12px',
+              padding: '12px 16px',
+              maxWidth: 400,
+              backdropFilter: 'blur(12px)',
+              border: (theme) => theme.palette.mode === 'dark'
+                ? '1px solid rgba(255, 255, 255, 0.1)'
+                : '1px solid rgba(0, 0, 0, 0.08)',
+              '& .MuiTooltip-arrow': {
+                color: (theme) => theme.palette.mode === 'dark'
+                  ? 'rgba(30, 41, 59, 0.98)'
+                  : 'rgba(255, 255, 255, 0.98)',
+                '&::before': {
+                  boxShadow: (theme) => theme.palette.mode === 'dark'
+                    ? '0 0 0 1px rgba(255, 255, 255, 0.1)'
+                    : '0 0 0 1px rgba(0, 0, 0, 0.05)'
+                }
+              }
+            }
+          },
+          arrow: {
+            sx: {
+              color: (theme) => theme.palette.mode === 'dark'
+                ? 'rgba(30, 41, 59, 0.98)'
+                : 'rgba(255, 255, 255, 0.98)'
+            }
+          }
+        }}
+      >
+        {chipElement}
+      </Tooltip>
     );
   };
 
@@ -244,7 +346,7 @@ const MainTable = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell><strong>ID</strong></TableCell>
+              <TableCell align="center" sx={{ width: 50 }}><strong>Historial</strong></TableCell>
               <TableCell><strong>Placa</strong></TableCell>
               <TableCell><strong>Tipo de Vehículo</strong></TableCell>
               <TableCell><strong>Gestor</strong></TableCell>
@@ -261,13 +363,28 @@ const MainTable = () => {
           </TableHead>
 
           <TableBody>
+            {tramites.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={13} sx={{ py: 10, textAlign: 'center', borderBottom: 'none' }}>
+                  <Typography variant="body1" color="text.secondary" fontWeight={500}>
+                    No hay datos para mostrar
+                  </Typography>
+                </TableCell>
+              </TableRow>
+            )}
             {tramites.map((tramite) => (
               <TableRow key={tramite.id} className="table-row">
 
-                <TableCell>
-                  <Typography variant="body2" fontWeight={600} color="primary">
-                    #{tramite.id}
-                  </Typography>
+                <TableCell align="center">
+                  <Tooltip title="Ver Historial">
+                    <IconButton
+                      size="small"
+                      color="secondary"
+                      onClick={() => handleVerTrazabilidad(tramite.id)}
+                    >
+                      <History fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
                 </TableCell>
 
                 <TableCell>
@@ -308,7 +425,7 @@ const MainTable = () => {
                 
 
                 <TableCell align="center">
-                  {getEstadoChip(tramite.estado)}
+                  {getEstadoChip(tramite.estado, tramite.descripcion)}
                 </TableCell>
 
                 <TableCell align="center">
@@ -385,16 +502,6 @@ const MainTable = () => {
                     <Tooltip title="Eliminar">
                       <IconButton size="small" color="error" onClick={() => handleDelete(tramite)}>
                         <Delete fontSize="small" />
-                      </IconButton>
-                    </Tooltip>
-
-                    <Tooltip title="Ver Historial">
-                      <IconButton
-                        size="small"
-                        color="secondary"
-                        onClick={() => handleVerTrazabilidad(tramite.id)}
-                      >
-                        <History fontSize="small" />
                       </IconButton>
                     </Tooltip>
 
