@@ -35,6 +35,12 @@ const History = () => {
     const [tramiteData, setTramiteData] = useState(null);
     const [historial, setHistorial] = useState([]);
 
+    const traducciones = {
+        created: "Creado",
+        changed: "Modificado",
+        deleted: "Eliminado",
+        estado: "Cambio de estado"
+    };
     // Cargar datos del trámite y su historial
     useEffect(() => {
         const fetchData = async () => {
@@ -442,9 +448,9 @@ const History = () => {
                                                     </Stack>
 
                                                     <Typography variant="h6" sx={{ fontWeight: 700, mb: 2, color: '#334155' }}>
-                                                        {item.evento} - {item.descripcion}
+                                                       {traducciones[item.evento?.toLowerCase()]} {'-'} {item.descripcion}
                                                     </Typography>
-
+                                                    
                                                     {/* Contenido dinámico del evento */}
                                                     {renderEventContent(item)}
                                                 </Box>
