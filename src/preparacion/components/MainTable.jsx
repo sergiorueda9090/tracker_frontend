@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   Paper,
   Table,
@@ -27,6 +27,7 @@ import {
   CardActionArea,
   Divider,
   Tab,
+  CircularProgress,
 } from '@mui/material';
 import {
   Edit,
@@ -44,12 +45,13 @@ import {
   Visibility,
   InsertDriveFile,
   History,
+  CloudUpload,
 } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { showAlert } from "../../store/globalStore/globalStore";
 
-import { getAllThunks, showThunk, deleteThunk, deleteArchivoThunk, showhistoryThunk, sendToTrackerThunk } from '../../store/preparacionStore/preparacionThunks';
+import { getAllThunks, showThunk, deleteThunk, deleteArchivoThunk, showhistoryThunk, sendToTrackerThunk, uploadArchivosThunk } from '../../store/preparacionStore/preparacionThunks';
 import { deleteTramiteRealtime } from '../../store/preparacionStore/preparacionStore';
 import Pagination from './Pagination';
 import useWebSocket from '../../hooks/useWebSocket';
@@ -67,6 +69,12 @@ const MainTable = () => {
   const [openFilesDialog, setOpenFilesDialog] = useState(false);
   const [selectedTramite, setSelectedTramite] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
+
+  // Estados para subida de archivos
+  const [archivosToUpload, setArchivosToUpload] = useState([]);
+  const [dragActive, setDragActive] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef(null);
 
   // WebSocket para actualizaciones en tiempo real
   const { lastMessage } = useWebSocket('/ws/preparacion/');
@@ -125,6 +133,85 @@ const MainTable = () => {
     setOpenFilesDialog(false);
     setSelectedTramite(null);
     setSelectedFile(null);
+    setArchivosToUpload([]);
+    setDragActive(false);
+  };
+
+  // Handlers para subida de archivos
+  const allowedExtensions = ['.pdf', '.png', '.jpg', '.jpeg'];
+
+  const processFiles = (files) => {
+    const validFiles = [];
+    const invalidFiles = [];
+
+    Array.from(files).forEach((file) => {
+      const ext = '.' + file.name.split('.').pop().toLowerCase();
+      if (allowedExtensions.includes(ext)) {
+        validFiles.push({ id: Date.now() + Math.random(), file });
+      } else {
+        invalidFiles.push(file.name);
+      }
+    });
+
+    if (invalidFiles.length > 0) {
+      dispatch(showAlert({
+        type: "error",
+        title: "Archivos no permitidos",
+        text: `Solo se permiten archivos PDF, PNG y JPG. Archivos rechazados: ${invalidFiles.join(', ')}`,
+      }));
+    }
+
+    if (validFiles.length > 0) {
+      setArchivosToUpload((prev) => [...prev, ...validFiles]);
+    }
+  };
+
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      processFiles(e.target.files);
+    }
+    e.target.value = '';
+  };
+
+  const handleDrag = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === 'dragenter' || e.type === 'dragover') {
+      setDragActive(true);
+    } else if (e.type === 'dragleave') {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      processFiles(e.dataTransfer.files);
+    }
+  };
+
+  const handleRemoveNewFile = (fileId) => {
+    setArchivosToUpload((prev) => prev.filter((f) => f.id !== fileId));
+  };
+
+  const handleUploadFiles = async () => {
+    if (archivosToUpload.length === 0 || !selectedTramite) return;
+
+    setUploading(true);
+    const files = archivosToUpload.map((f) => f.file);
+    const result = await dispatch(uploadArchivosThunk(selectedTramite.id, files));
+    setUploading(false);
+
+    if (result.success) {
+      setSelectedTramite((prev) => ({
+        ...prev,
+        archivos: result.archivos,
+        total_archivos: result.archivos.length,
+      }));
+      setArchivosToUpload([]);
+    }
   };
 
   const handleSelectFile = (file) => {
@@ -133,7 +220,7 @@ const MainTable = () => {
 
   const handleDownloadFile = (file) => {
     // Construir URL completa del archivo
-    const fileUrl = `http://127.0.0.1:8000/media/${file.url}`;
+    const fileUrl = `${file.url}`;
     window.open(fileUrl, '_blank');
   };
 
@@ -442,18 +529,17 @@ const MainTable = () => {
 
                 <TableCell align="center">
                   <Tooltip
-                    title={tramite.total_archivos > 0 ? "Ver archivos" : "No hay archivos"}
+                    title={tramite.total_archivos > 0 ? "Ver archivos" : "Subir archivos"}
                     placement="left"
                     arrow
                   >
                     <Box display="flex" alignItems="center" justifyContent="center">
                       <IconButton
-                        onClick={() => tramite.total_archivos > 0 && handleOpenFiles(tramite)}
-                        disabled={tramite.total_archivos === 0}
+                        onClick={() => handleOpenFiles(tramite)}
                         sx={{
                           transition: 'transform 0.2s',
                           '&:hover': {
-                            transform: tramite.total_archivos > 0 ? 'scale(1.1)' : 'none'
+                            transform: 'scale(1.1)'
                           }
                         }}
                       >
@@ -720,6 +806,106 @@ const MainTable = () => {
                     </Typography>
                   </Box>
                 )}
+
+                {/* Zona de subida de archivos */}
+                <Divider sx={{ my: 2 }} />
+                <Typography variant="subtitle2" color="text.secondary" fontWeight={700} letterSpacing={0.5} mb={1.5}>
+                  SUBIR ARCHIVOS
+                </Typography>
+
+                <Box
+                  onDragEnter={handleDrag}
+                  onDragOver={handleDrag}
+                  onDragLeave={handleDrag}
+                  onDrop={handleDrop}
+                  sx={{
+                    border: dragActive ? '2px dashed #00A859' : '2px dashed #ccc',
+                    borderRadius: 2,
+                    p: 2.5,
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    bgcolor: dragActive ? 'rgba(0, 168, 89, 0.06)' : 'white',
+                    transition: 'all 0.2s ease',
+                    '&:hover': {
+                      borderColor: '#00A859',
+                      bgcolor: 'rgba(0, 168, 89, 0.04)',
+                    }
+                  }}
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".pdf,.png,.jpg,.jpeg"
+                    multiple
+                    hidden
+                    onChange={handleFileChange}
+                  />
+                  <CloudUpload sx={{ fontSize: 36, color: dragActive ? '#00A859' : '#9e9e9e', mb: 0.5 }} />
+                  <Typography variant="body2" color="text.secondary" fontWeight={500}>
+                    {dragActive ? 'Suelta los archivos aquí' : 'Clic o arrastra archivos'}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    PDF, PNG, JPG
+                  </Typography>
+                </Box>
+
+                {/* Lista de archivos pendientes */}
+                {archivosToUpload.length > 0 && (
+                  <Box mt={2}>
+                    <Typography variant="caption" color="text.secondary" fontWeight={600} mb={1} display="block">
+                      Pendientes ({archivosToUpload.length})
+                    </Typography>
+                    {archivosToUpload.map((item) => (
+                      <Box
+                        key={item.id}
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 1,
+                          p: 1,
+                          mb: 0.5,
+                          bgcolor: '#fff8e1',
+                          borderRadius: 1,
+                          border: '1px solid #ffe082',
+                        }}
+                      >
+                        {item.file.type === 'application/pdf' ? (
+                          <PictureAsPdf sx={{ fontSize: 24, color: '#d32f2f', flexShrink: 0 }} />
+                        ) : (
+                          <ImageIcon sx={{ fontSize: 24, color: '#1976d2', flexShrink: 0 }} />
+                        )}
+                        <Box flex={1} minWidth={0}>
+                          <Typography variant="caption" fontWeight={600} noWrap display="block" title={item.file.name}>
+                            {item.file.name}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {formatFileSize(item.file.size)}
+                          </Typography>
+                        </Box>
+                        <IconButton size="small" onClick={() => handleRemoveNewFile(item.id)}>
+                          <Close fontSize="small" />
+                        </IconButton>
+                      </Box>
+                    ))}
+                    <Button
+                      variant="contained"
+                      size="small"
+                      fullWidth
+                      startIcon={uploading ? <CircularProgress size={16} color="inherit" /> : <CloudUpload />}
+                      onClick={handleUploadFiles}
+                      disabled={uploading}
+                      sx={{
+                        mt: 1.5,
+                        bgcolor: '#00A859',
+                        '&:hover': { bgcolor: '#008e4a' },
+                        fontWeight: 600,
+                      }}
+                    >
+                      {uploading ? 'Subiendo...' : `Subir ${archivosToUpload.length} archivo(s)`}
+                    </Button>
+                  </Box>
+                )}
               </Box>
             </Grid>
 
@@ -806,7 +992,7 @@ const MainTable = () => {
                   }}>
                     {selectedFile.tipo === 'application/pdf' ? (
                       <iframe
-                        src={`http://127.0.0.1:8000/media/${selectedFile.url}`}
+                        src={`${selectedFile.url}`}
                         style={{
                           width: '100%',
                           height: '100%',
@@ -827,7 +1013,7 @@ const MainTable = () => {
                         p: 2
                       }}>
                         <img
-                          src={`http://127.0.0.1:8000/media/${selectedFile.url}`}
+                          src={`${selectedFile.url}`}
                           alt={selectedFile.nombre}
                           style={{
                             maxWidth: '100%',

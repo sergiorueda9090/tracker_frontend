@@ -604,6 +604,73 @@ export const showhistoryThunk = (id = "") => {
     }
 
 }
+// Subir archivos a un trámite existente (sin cerrar dialog ni resetear form)
+export const uploadArchivosThunk = (tramiteId, files) => {
+  return async (dispatch, getState) => {
+    const { authStore } = getState();
+    const token = authStore.token;
+
+    await dispatch(showBackDropStore());
+
+    const formData = new FormData();
+    files.forEach((file) => {
+      formData.append('archivos', file);
+    });
+
+    const options = {
+      method: 'PUT',
+      url: `${URL}${namespace_api}${tramiteId}/${endpoint_update}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data',
+      },
+      data: formData,
+    };
+
+    try {
+      const response = await axios.request(options);
+
+      await dispatch(hideBackDropStore());
+
+      if (response.status === 200) {
+        await dispatch(
+          showAlert({
+            type: "success",
+            title: "Archivos subidos",
+            text: "Los archivos se han subido exitosamente.",
+          })
+        );
+
+        await dispatch(getAllThunks());
+
+        return { success: true, archivos: response.data.archivos };
+      } else {
+        await dispatch(
+          showAlert({
+            type: "error",
+            title: "Error al subir archivos",
+            text: "Ocurrió un error al subir los archivos.",
+          })
+        );
+        return { success: false };
+      }
+    } catch (error) {
+      await dispatch(hideBackDropStore());
+
+      const errorMessage = error.response?.data?.error || "Error del servidor al subir los archivos.";
+
+      await dispatch(
+        showAlert({
+          type: "error",
+          title: "Error al subir archivos",
+          text: errorMessage,
+        })
+      );
+      return { success: false };
+    }
+  };
+};
+
 // Enviar trámite al Tracker
 export const sendToTrackerThunk = (tramiteId) => {
   return async (dispatch, getState) => {

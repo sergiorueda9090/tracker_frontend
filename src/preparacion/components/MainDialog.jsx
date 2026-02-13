@@ -49,6 +49,18 @@ const MainDialog = ({ open, onClose }) => {
   const [dragActive, setDragActive] = useState(false);
   const [gestoresDisponibles, setGestoresDisponibles] = useState([]);
 
+  // Limpiar estado local al cerrar el diálogo
+  useEffect(() => {
+    if (!open) {
+      // Revocar URLs de preview para liberar memoria
+      archivos.forEach(a => { if (a.preview) URL.revokeObjectURL(a.preview); });
+      setArchivos([]);
+      setSelectedDocumento(null);
+      setDragActive(false);
+      setGestoresDisponibles([]);
+    }
+  }, [open]);
+
   // Tipos de vehículo disponibles
   const tiposVehiculo = [
     'Automóvil',
